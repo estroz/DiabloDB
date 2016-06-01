@@ -3,13 +3,9 @@ DROP TABLE CommentVote;
 DROP TABLE ThreadVote;
 DROP TABLE UserComment;
 DROP TABLE Thread;
-DROP TABLE Poster;
 DROP TABLE Page;
+DROP TABLE Poster;
 
-CREATE TABLE Page (
-	TopicName VARCHAR2(100),
-	AdminPageFlag INTEGER,
-	PRIMARY KEY (TopicName));
 
 CREATE TABLE Poster (
 	PosterName VARCHAR2(50),
@@ -18,28 +14,23 @@ CREATE TABLE Poster (
   AdminID INTEGER,
 	PRIMARY KEY (PosterName));
 
+CREATE TABLE Page (
+	TopicName VARCHAR2(100),
+  PosterName VARCHAR2(50) NOT NULL,
+	PRIMARY KEY (TopicName),
+  FOREIGN KEY (PosterName) REFERENCES Poster);
+
 CREATE TABLE Thread (
 	ThreadID INTEGER,
 	Title CHAR(50),
 	Text VARCHAR2(4000),
-	Time CHAR(12),
+	Time TIMESTAMP,
 	voteNum INTEGER,
 	isLockedFlag INTEGER,
 	TopicName VARCHAR2(100),
-	PosterName VARCHAR2(50),
+	PosterName VARCHAR2(50) NOT NULL,
 	PRIMARY KEY (ThreadID),
 	FOREIGN KEY (TopicName) REFERENCES Page,
-	FOREIGN KEY (PosterName) REFERENCES Poster);
-
-CREATE TABLE UserComment (
-	CommID INTEGER,
-	Text VARCHAR2(4000),
-	voteNum INTEGER,
-	Time TIMESTAMP,
-	PosterName VARCHAR2(50),
-	ThreadID INTEGER,
-	PRIMARY KEY(CommID),
-	FOREIGN KEY (ThreadID) REFERENCES Thread,
 	FOREIGN KEY (PosterName) REFERENCES Poster);
 
 CREATE TABLE ThreadVote (
@@ -50,8 +41,20 @@ CREATE TABLE ThreadVote (
 	FOREIGN KEY (PosterName) REFERENCES Poster,
 	FOREIGN KEY (ThreadID) REFERENCES Thread);
 
+CREATE TABLE UserComment (
+	CommID INTEGER,
+	Text VARCHAR2(4000),
+	voteNum INTEGER,
+	Time TIMESTAMP,
+	PosterName VARCHAR2(50) NOT NULL,
+	ThreadID INTEGER NOT NULL,
+	PRIMARY KEY(CommID),
+	FOREIGN KEY (ThreadID) REFERENCES Thread,
+	FOREIGN KEY (PosterName) REFERENCES Poster);
+
+
 CREATE TABLE CommentVote (
-	PosterName VARCHAR2(100),
+	PosterName VARCHAR2(50),
 	UserVotedFlag INTEGER,
 	ThreadID	INTEGER,
   CommID INTEGER,
@@ -63,12 +66,9 @@ CREATE TABLE CommentVote (
 CREATE TABLE Suggestion (
 	SugID INTEGER,
 	Text VARCHAR2(4000),
-	PosterName VARCHAR2(100),
+	PosterName VARCHAR2(100) NOT NULL,
 	TopicName VARCHAR2(100),
 	PRIMARY KEY (SugID, PosterName, TopicName),
 	FOREIGN KEY (PosterName) REFERENCES Poster,
 	FOREIGN KEY (TopicName) REFERENCES Page);
-
-
-
 
