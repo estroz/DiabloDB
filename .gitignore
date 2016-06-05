@@ -1,2 +1,7 @@
 # recovery files
 *.swp
+.classpath
+.metadata
+.project
+.recommenders
+.settings
