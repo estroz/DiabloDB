@@ -12,5 +12,9 @@ public class Page {
 		this.posterName = posterName;
 	}
 	
+	public String toString() {
+		return "Page; TopicName: " + this.topicName;
+	}
+	
 
 }

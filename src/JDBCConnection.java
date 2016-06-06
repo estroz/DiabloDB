@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class JDBCConnection {
 	private Connection connection;
@@ -81,7 +80,7 @@ public class JDBCConnection {
 		while (topicsRS.next()) {
 			String topic = topicsRS.getString(1);
 			Page p = new Page(topic, userName);
-			arr.get(0).add(topic);
+			arr.get(0).add(p);
 		}
 		System.out.println("got the pages");
 		

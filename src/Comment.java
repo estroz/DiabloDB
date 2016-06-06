@@ -17,5 +17,9 @@ public class Comment {
 		this.poster = poster;
 		this.threadID = threadID;
 	}
+	
+	public String toString() {
+		return "CommentObject; id: " + Integer.toString(this.commID);
+	}
 
 }
