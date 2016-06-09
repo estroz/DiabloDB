@@ -9,6 +9,11 @@ import java.util.ArrayList;
 public class JDBCConnection {
 	private Connection connection;
 	
+//	private Integer getNewID() throws SQLException {
+//		Statement stmt = this.connection.createStatement();
+//		ResultSet rs = stmt.executeQuery("SELECT * FROM Poster");
+//	}
+	
 	public static void main(String[] args) throws SQLException {
 		JDBCConnection jd = new JDBCConnection();
 		// Test each method, this is the getUsers()
@@ -33,7 +38,7 @@ public class JDBCConnection {
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 			System.out.println("Driver registered");
 			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1522:ug",
-				"USERNAME", "PASSWORD");
+				"username", "password");
 			this.connection = con;
 		} catch (SQLException e) {
 			System.out.println("Couldn't conenct to the database, are you tunneled?");
@@ -201,4 +206,18 @@ public class JDBCConnection {
 		
 		return arr;
 	}
+	
+	
+	/*
+	 * ----------------------------------------------------------------------------------------- 
+	 * All the following are INSERT funtions, rather than SELECT Queries. USER BEWARE
+	 */
+	
+	public boolean addUser(String userName) throws SQLException {
+		Statement stmnt = this.connection.createStatement();
+		int rowcount = stmnt.executeUpdate("INSERT INTO )
+		
+	}
+	
+	
 }
