@@ -226,7 +226,7 @@ public class JDBCConnection {
 		int numberOfPosters = currentPosters.size();
 		while (i < numberOfPosters){
 			// Check if username was already taken
-			if (currentPosters[i].userName.equals(userName)) {
+			if (currentPosters.get(i).userName.equals(userName)) {
 				// TODO: send notice to GUI and disallow name creation
 				System.err.println("Username already taken. Please choose another.");
 			}
@@ -258,14 +258,14 @@ public class JDBCConnection {
 		int numberOfPages = allPages.size();
 		while (i < numberOfPages){
 			// Check if topicname was already taken
-			if (allPages[i].equals(topicName)) {
+			if (allPages.get(i).equals(topicName)) {
 				// TODO: send notice to GUI and disallow page creation
 				System.err.println("Topic name already exists for a page. Please choose another topic or use this page to post threads.");
 			}
 			i++;
 		}
 		if (i == numberOfPages-1) {
-			int newUser = stmnt.executeUpdate("INSERT INTO Poster VALUES ('"+topicName+"', '"+posterName+"'");
+			int newUser = stmnt.executeUpdate("INSERT INTO Page VALUES ('"+topicName+"', '"+posterName+"'");
 			assert newUser == 0;
 		}
 	}
@@ -293,6 +293,9 @@ public class JDBCConnection {
 		assert text != null;
 		assert posterName != null;
 		assert threadID != null;
+		if (isThreadLocked(threadID)) {
+			throw new SQLException("Thread is locked. You cannot comment on a locked thread.")
+		}
 		Statement stmnt = this.connection.createStatement();
 		int newComment = stmnt.executeUpdate("INSERT INTO UserComment VALUES (comment_seq.NEXTVAL, '"+text+"', 1, generate_timestamp, '"+posterName+"', '"+threadID+"'");
 		assert newComment == 0;
@@ -324,7 +327,7 @@ public class JDBCConnection {
 		Statement stmnt = this.connection.createStatement();
 		int vote = -1;
 		if (isUpvote) vote = 1;
-		int updatedThread = stmnt.executeUpdate("UPDATE UserThread SET voteNum = voteNum + "+vote+" WHERE PosterName = '"+posterName+"' AND CommID = '"+threadID+"'");
+		int updatedThread = stmnt.executeUpdate("UPDATE UserThread SET voteNum = voteNum + "+vote+" WHERE PosterName = '"+posterName+"' AND ThreadID = '"+threadID+"'");
 		assert updatedThread == 0;
 	}
 
@@ -349,7 +352,7 @@ public class JDBCConnection {
 			assert commentVote == 0;
 			updateCommentOnVote(posterName, isUpvote, id);
 		} else {
-			int threadVote = stmnt.executeUpdate("INSERT INTO ThreadVote VALUES (comment_seq.NEXTVAL, '"+text+"', 1, generate_timestamp, '"+posterName+"', '"+threadID+"'");
+			int threadVote = stmnt.executeUpdate("INSERT INTO ThreadVote VALUES ('"+posterName+"', '"+vote+"', '"+id+"'");
 			assert threadVote == 0;
 			updateThreadOnVote(posterName, isUpvote, id);
 		}
@@ -368,5 +371,22 @@ public class JDBCConnection {
 		int suggestion = stmnt.executeUpdate("INSERT INTO Suggestion VALUES (suggestion_seq.NEXTVAL, '"+text+"', '"+posterName+"', '"+topicName+"'");
 		assert suggestion == 0;
 	}
+
+	/*
+	 * -----------------------------------------------------------------------------------------
+	 * Other update methods and administrative functions
+	 */
+
+	/*
+	 * Promote a poster to admin
+	 * @throws: SQLException thrown if AdminID is not NULL by db
+	 */
+	public void promotePosterToAdmin(String posterName) throws SQLException {
+		Statement stmnt = this.connection.createStatement();
+		int promote = stmnt.executeUpdate("UPDATE Poster SET AdminID = admin_seq.NEXTVAL WHERE PosterName = '"+posterName+"' AND AdminID IS NULL");
+		assert promote == 0;
+	}
+
+
 
 }
