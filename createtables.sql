@@ -1,3 +1,4 @@
+DROP SEQUENCE id_seq;
 DROP TABLE Suggestion;
 DROP TABLE CommentVote;
 DROP TABLE ThreadVote;
@@ -5,13 +6,11 @@ DROP TABLE UserComment;
 DROP TABLE Thread;
 DROP TABLE Page;
 DROP TABLE Poster;
-DROP TABLE SecretCount;
 
 CREATE SEQUENCE id_seq
-MINVALUE 10
-START WITH 10
+START WITH 9
 INCREMENT BY 1
-CACHE 10
+NOCACHE;
 
 CREATE TABLE Poster (
 	PosterName VARCHAR2(50),
@@ -98,32 +97,32 @@ insert into Page values ('BrettPage', 'Brett');
 insert into Page values ('JoshPage', 'Josh');
 insert into Page values ('DiabloPage', 'Diablo');
 
-insert into Thread values (0, 'EricThread', 'ThreadText1', '2016-06-01', 0, 0, 'EricPage', 'Eric');
-insert into Thread values (1, 'SamThread', 'ThreadText2', '2016-06-01', 0, 0, 'SamPage', 'Sam');
-insert into Thread values (2, 'BrettThread', 'ThreadText3', '2016-06-01', 0, 0, 'BrettPage', 'Brett');
-insert into Thread values (3, 'JoshThread', 'ThreadText4', '2016-06-01', 0, 0, 'JoshPage', 'Josh');
-insert into Thread values (4, 'DiabloThread', 'ThreadText5', '2016-06-01', 0, 0, 'DiabloPage', 'Diablo');
+insert into Thread values (id_seq.nextval, 'EricThread', 'ThreadText1', '2016-06-01', 0, 0, 'EricPage', 'Eric'); 
+insert into Thread values (id_seq.nextval, 'SamThread', 'ThreadText2', '2016-06-01', 0, 0, 'SamPage', 'Sam');
+insert into Thread values (id_seq.nextval, 'BrettThread', 'ThreadText3', '2016-06-01', 0, 0, 'BrettPage', 'Brett');
+insert into Thread values (id_seq.nextval, 'JoshThread', 'ThreadText4', '2016-06-01', 0, 0, 'JoshPage', 'Josh');
+insert into Thread values (id_seq.nextval, 'DiabloThread', 'ThreadText5', '2016-06-01', 0, 0, 'DiabloPage', 'Diablo');
 
-insert into ThreadVote values ('Eric', 1, 0);
-insert into ThreadVote values ('Sam', 1, 1);
-insert into ThreadVote values ('Brett', 1, 2);
-insert into ThreadVote values ('Josh', 1, 3);
-insert into ThreadVote values ('Diablo', 1, 4);
+insert into ThreadVote values ('Eric', 1, 10);
+insert into ThreadVote values ('Sam', 1, 11);
+insert into ThreadVote values ('Brett', 1, 12);
+insert into ThreadVote values ('Josh', 1, 13);
+insert into ThreadVote values ('Diablo', 1, 14);
 
-insert into UserComment values (0, 'CommentText1', 0, '2016-06-01', 'Eric', 0);
-insert into UserComment values (1, 'CommentText2', 0, '2016-06-01', 'Sam', 1);
-insert into UserComment values (2, 'CommentText3', 0, '2016-06-01', 'Brett', 2);
-insert into UserComment values (3, 'CommentText4', 0, '2016-06-01', 'Josh', 3);
-insert into UserComment values (4, 'CommentText5', 0, '2016-06-01', 'Diablo', 4);
+insert into UserComment values (id_seq.nextval, 'CommentText1', 0, '2016-06-01', 'Eric', 10); 
+insert into UserComment values (id_seq.nextval, 'CommentText2', 0, '2016-06-01', 'Sam', 11);
+insert into UserComment values (id_seq.nextval, 'CommentText3', 0, '2016-06-01', 'Brett', 12);
+insert into UserComment values (id_seq.nextval, 'CommentText4', 0, '2016-06-01', 'Josh', 13);
+insert into UserComment values (id_seq.nextval, 'CommentText5', 0, '2016-06-01', 'Diablo', 14);
 
-insert into CommentVote values ('Eric', 1, 0);
-insert into CommentVote values ('Sam', 1, 1);
-insert into CommentVote values ('Brett', 1, 2);
-insert into CommentVote values ('Josh', 1, 3);
-insert into CommentVote values ('Diablo', 1, 4);
+insert into CommentVote values ('Eric', 1, 16);
+insert into CommentVote values ('Sam', 1, 17);
+insert into CommentVote values ('Brett', 1, 18);
+insert into CommentVote values ('Josh', 1, 19);
+insert into CommentVote values ('Diablo', 1, 20);
 
-insert into Suggestion values (0, 'Suggestion1', 'Eric', 'EricPage');
-insert into Suggestion values (1, 'Suggestion2', 'Sam', 'SamPage');
-insert into Suggestion values (2, 'Suggestion3', 'Brett', 'BrettPage');
-insert into Suggestion values (3, 'Suggestion4', 'Josh', 'JoshPage');
-insert into Suggestion values (4, 'Suggestion5', 'Diablo', 'DiabloPage');
+insert into Suggestion values (id_seq.nextval, 'Suggestion1', 'Eric', 'EricPage');
+insert into Suggestion values (id_seq.nextval, 'Suggestion2', 'Sam', 'SamPage');
+insert into Suggestion values (id_seq.nextval, 'Suggestion3', 'Brett', 'BrettPage');
+insert into Suggestion values (id_seq.nextval, 'Suggestion4', 'Josh', 'JoshPage');
+insert into Suggestion values (id_seq.nextval, 'Suggestion5', 'Diablo', 'DiabloPage');
