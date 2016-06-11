@@ -28,14 +28,14 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">DiabloDB</a>
+          <a class="navbar-brand" href="index.html">DiabloDB <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li><a href="#">Front Page</a></li>
             <li><a href="pages_list.html">Your Pages</a></li>
             <li><a href="threads_list.html">Your Threads</a></li>
             <li><a href="comments_list.html">Your Comments</a></li>
+            <li><a href="user.html">Profile</a></li>
             <li><a id="login" href="sign_in.html">Log in</a></li>
             <li><a id="logout" href="sign_in.html">Log out</a></li>
             <!-- <li class="dropdown">
@@ -58,60 +58,33 @@
     <div class="container theme-showcase" role="main">
 
       <!-- Main jumbotron for a primary marketing message or call to action -->
-      <div class="jumbotron">
-        <h1>DiabloDB</h1>
-        <p>Your cloud based solution for machine intelligence content and delivery network.</p>
+      <div class="page-header text-center">
+        <h1><strong>DiabloDB</strong></h1>
+        <p>Sign up for an account!</p>
       </div>
 
       <form>
   <div class="form-group row">
-    <label for="inputEmail3" class="col-sm-2 form-control-label">Email</label>
+    <label for="inputEmail3" class="col-sm-2 form-control-label">Username</label>
     <div class="col-sm-10">
-      <input type="email" class="form-control" id="inputEmail3" placeholder="Email">
+      <input type="email" class="form-control" id="inputEmail" placeholder="Username">
     </div>
   </div>
   <div class="form-group row">
     <label for="inputPassword3" class="col-sm-2 form-control-label">Password</label>
     <div class="col-sm-10">
-      <input type="password" class="form-control" id="inputPassword3" placeholder="Password">
+      <input type="password" class="form-control" id="inputPassword" placeholder="Password">
     </div>
   </div>
   <div class="form-group row">
-    <label class="col-sm-2">Radios</label>
+    <label for="inputPassword3" class="col-sm-2 form-control-label">Confirm Password</label>
     <div class="col-sm-10">
-      <div class="radio">
-        <label>
-          <input type="radio" name="gridRadios" id="gridRadios1" value="option1" checked>
-          Option one is this and that&mdash;be sure to include why it's great
-        </label>
-      </div>
-      <div class="radio">
-        <label>
-          <input type="radio" name="gridRadios" id="gridRadios2" value="option2">
-          Option two can be something else and selecting it will deselect option one
-        </label>
-      </div>
-      <div class="radio disabled">
-        <label>
-          <input type="radio" name="gridRadios" id="gridRadios3" value="option3" disabled>
-          Option three is disabled
-        </label>
-      </div>
-    </div>
-  </div>
-  <div class="form-group row">
-    <label class="col-sm-2">Checkbox</label>
-    <div class="col-sm-10">
-      <div class="checkbox">
-        <label>
-          <input type="checkbox"> Check me out
-        </label>
-      </div>
+      <input type="password" class="form-control" id="inputConfirmPassword" placeholder="Password">
     </div>
   </div>
   <div class="form-group row">
     <div class="col-sm-offset-2 col-sm-10">
-      <button type="submit" class="btn btn-secondary">Sign in</button>
+      <button type="submit" class="btn btn-primary">Sign up</button>
     </div>
   </div>
 </form>

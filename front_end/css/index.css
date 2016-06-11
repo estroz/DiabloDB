@@ -7,6 +7,10 @@ body {
   padding: 20px;
 }
 
+.sidebar > a {
+  padding-right: 20px;
+}
+
 .theme-dropdown .dropdown-menu {
   position: static;
   display: block;
