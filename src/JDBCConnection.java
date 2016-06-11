@@ -32,6 +32,46 @@ public class JDBCConnection {
 		ArrayList<ArrayList<Object>> aUser = jd.getSpecificUser(users.get(0).userName);
 		System.out.println(aUser);
 
+		// Test getThreadCOmments(thread)
+		ArrayList<Comment> commentsOfThread = jd.getThreadComments(Integer.toString(pageThreads.get(0).threadID));
+		System.out.println(commentsOfThread);
+		
+//		 Test createUser(name, admin)
+		jd.createUser("testUser", false);
+		
+		// test promote poster
+		jd.promotePosterToAdmin("Sam");
+		System.out.println("Sam is now the most powerful user on the site");
+
+		// test create thread(
+		jd.createThread("api test thread", "el o el", "SamPage", "Diablo");
+		System.out.println("success testing create thread");
+		
+		// test create comment
+		jd.createComment("nice meme", "Sam", Integer.toString(pageThreads.get(0).threadID));
+		System.out.println("success testing create comment");
+		
+		// test create page
+		jd.createPage("memes", "Sam");
+		System.out.println("success testing create page");
+		
+		// test create vote
+		jd.createVote("Diablo", false, commentsOfThread.get(0).commID, true);
+		System.out.println("success testing creating vote");
+
+		//test update comment
+		jd.updateCommentOnVote("Diablo", true, commentsOfThread.get(0).commID);
+		System.out.println("success testing create commentvote");
+		
+		// test update thread
+		jd.updateThreadOnVote("Diablo", true, pageThreads.get(0).threadID);
+		System.out.println("success testing create threadvote");
+		
+		// test create suggestion
+		jd.createSuggestion("try harder lol", "Sam", "DiabloPage");
+		System.out.println("success testing create suggestion");
+		
+		
 	}
 	public JDBCConnection() {
 		try {
@@ -220,7 +260,7 @@ public class JDBCConnection {
 		// TODO: Implement asserts in main(), should be checked upon insertion into db, by the db
 		assert userName != null;
 		Statement stmnt = this.connection.createStatement();
-		ArrayList<Poster> currentPosters = getPoster();
+		ArrayList<Poster> currentPosters = getUsers();
 		int i = 0;
 		// Implement later as catching an SQLException, as there should already be a check for uniqueness in the DDL
 		int numberOfPosters = currentPosters.size();
@@ -233,11 +273,12 @@ public class JDBCConnection {
 			i++;
 		}
 		if (i == numberOfPosters-1) {
+			int newUser;
 			if (!isAdmin) {
-				int newUser = stmnt.executeUpdate("INSERT INTO Poster VALUES ('"+userName+"', 0, 0, null");
+				newUser = stmnt.executeUpdate("INSERT INTO Poster VALUES ('"+userName+"', 0, 0, null");
 			}
 			else {
-				int newUser = stmnt.executeUpdate("INSERT INTO Poster VALUES ('"+userName+"', 0, 0, admin_seq.NEXTVAL");
+				newUser = stmnt.executeUpdate("INSERT INTO Poster VALUES ('"+userName+"', 0, 0, admin_seq.NEXTVAL");
 			}
 			assert newUser == 0;
 		}
@@ -280,7 +321,7 @@ public class JDBCConnection {
 		assert topicName != null;
 		assert posterName != null;
 		Statement stmnt = this.connection.createStatement();
-		int newThread = stmnt.executeUpdate("INSERT INTO Thread VALUES (thread_seq.NEXTVAL, '"+threadTitle+"', '"+text+"', generate_timestamp, 1, 0, '"+topicName+"', '"+posterName+"'");
+		int newThread = stmnt.executeUpdate("INSERT INTO Thread VALUES (id_seq.NEXTVAL, '" + threadTitle + "', '"+text+"', current_timestamp, 1, 0, '"+topicName+"', '"+posterName+"')");
 		assert newThread == 0;
 	}
 
@@ -288,16 +329,16 @@ public class JDBCConnection {
 	 * Create a comment
 	 * @param: posterName and threadID should be found and passed in via query result
 	 */
-	public void createComment(String text, String posterName, int threadID) throws SQLException {
+	public void createComment(String text, String posterName, String threadID) throws SQLException {
 		// TODO: Implement asserts in main(), should be checked upon insertion into db, by the db
 		assert text != null;
 		assert posterName != null;
-		assert threadID != null;
-		if (isThreadLocked(threadID)) {
-			throw new SQLException("Thread is locked. You cannot comment on a locked thread.")
+//		assert threadID != null;
+		if (Thread.isThreadLocked(this.connection, threadID)) {
+			throw new SQLException("Thread is locked. You cannot comment on a locked thread.");
 		}
 		Statement stmnt = this.connection.createStatement();
-		int newComment = stmnt.executeUpdate("INSERT INTO UserComment VALUES (comment_seq.NEXTVAL, '"+text+"', 1, generate_timestamp, '"+posterName+"', '"+threadID+"'");
+		int newComment = stmnt.executeUpdate("INSERT INTO UserComment VALUES (id_seq.NEXTVAL, '"+text+"', 1, current_timestamp, '"+posterName+"', "+threadID+")");
 		assert newComment == 0;
 	}
 
@@ -308,7 +349,7 @@ public class JDBCConnection {
 	public void updateCommentOnVote(String posterName, boolean isUpvote, int commID) throws SQLException {
 		// TODO: Implement asserts in main(), should be checked upon insertion into db, by the db
 		assert posterName != null;
-		assert commID != null;
+//		assert commID != null;
 		Statement stmnt = this.connection.createStatement();
 		int vote = -1;
 		if (isUpvote) vote = 1;
@@ -323,11 +364,11 @@ public class JDBCConnection {
 	public void updateThreadOnVote(String posterName, boolean isUpvote, int threadID) throws SQLException {
 		// TODO: Implement asserts in main(), should be checked upon insertion into db, by the db
 		assert posterName != null;
-		assert threadID != null;
+//		assert threadID != null;
 		Statement stmnt = this.connection.createStatement();
 		int vote = -1;
 		if (isUpvote) vote = 1;
-		int updatedThread = stmnt.executeUpdate("UPDATE UserThread SET voteNum = voteNum + "+vote+" WHERE PosterName = '"+posterName+"' AND ThreadID = '"+threadID+"'");
+		int updatedThread = stmnt.executeUpdate("UPDATE Thread SET voteNum = voteNum + "+vote+" WHERE PosterName = '"+posterName+"' AND ThreadID = '"+threadID+"'");
 		assert updatedThread == 0;
 	}
 
@@ -340,19 +381,19 @@ public class JDBCConnection {
 	public void createVote(String posterName, boolean isUpvote, int id, boolean isComment) throws SQLException {
 		// TODO: Implement asserts in main(), should be checked upon insertion into db, by the db
 		assert posterName != null;
-		assert id != null;
-		assert isComment != null;
+//		assert id != null;
+//		assert isComment != null;
 		Statement stmnt = this.connection.createStatement();
 		// Convert isUpvote to int
 		int vote = 0;
 		if (isUpvote) vote = 1;
 		// If vote is on a comment, update comments, else update threads
 		if (isComment) {
-			int commentVote = stmnt.executeUpdate("INSERT INTO CommentVote VALUES ('"+posterName+"', '"+vote+"', '"+id+"'");
+			int commentVote = stmnt.executeUpdate("INSERT INTO CommentVote VALUES ('"+posterName+"', "+vote+", "+Integer.toString(id)+")");
 			assert commentVote == 0;
 			updateCommentOnVote(posterName, isUpvote, id);
 		} else {
-			int threadVote = stmnt.executeUpdate("INSERT INTO ThreadVote VALUES ('"+posterName+"', '"+vote+"', '"+id+"'");
+			int threadVote = stmnt.executeUpdate("INSERT INTO ThreadVote VALUES ('"+posterName+"', "+vote+", '"+Integer.toString(id)+")");
 			assert threadVote == 0;
 			updateThreadOnVote(posterName, isUpvote, id);
 		}
@@ -368,7 +409,7 @@ public class JDBCConnection {
 		assert posterName != null;
 		assert topicName != null;
 		Statement stmnt = this.connection.createStatement();
-		int suggestion = stmnt.executeUpdate("INSERT INTO Suggestion VALUES (suggestion_seq.NEXTVAL, '"+text+"', '"+posterName+"', '"+topicName+"'");
+		int suggestion = stmnt.executeUpdate("INSERT INTO Suggestion VALUES (id_seq.NEXTVAL, '"+text+"', '"+posterName+"', '"+topicName+"')");
 		assert suggestion == 0;
 	}
 
@@ -387,6 +428,21 @@ public class JDBCConnection {
 		assert promote == 0;
 	}
 
+	public void adminLockThread(int threadID, String posterName) throws SQLException {
+		Statement stmnt = this.connection.createStatement();
+		ResultSet rs = stmnt.executeQuery("SELECT adminID FROM Poster " +
+											"WHERE postername = '" + posterName + "'");
+		boolean x = true;
+		while (rs.next()) {
+			x = rs.wasNull();
+		}
+		if (x) {
+			throw new SQLException("This user is not an admin.");
+		}
+		
+		int promote = stmnt.executeUpdate("UPDATE Thread SET isLockedFlag = 1");
+		assert promote == 0;
+	}
 
 
 }

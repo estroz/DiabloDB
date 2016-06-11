@@ -1,3 +1,7 @@
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Time;
 
 public class Thread {
@@ -29,11 +33,12 @@ public class Thread {
 	/*
 	 * Returns true if a thread is locked
 	 */
-	public boolean isThreadLocked(String threadID) throws SQLException {
-		Statement stmt = this.connection.createStatement();
+	public static boolean isThreadLocked(Connection con, String threadID) throws SQLException {
+		Statement stmt = con.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT isLockedFlag FROM Thread WHERE ThreadID = '"+threadID+"'");
 
-	  int flag = rs.getInt(6);
+		rs.next();
+		int flag = rs.getInt(1);
 		if (flag == 1) return true;
 		return false;
 	}
