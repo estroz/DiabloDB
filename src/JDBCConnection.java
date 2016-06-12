@@ -210,15 +210,18 @@ public class JDBCConnection {
 	/*
 	 * Returns a list of all pages
 	 */
-	public ArrayList<String> getAllPages() throws SQLException {
-		ArrayList<String> arr = new ArrayList<String>();
+	public ArrayList<Page> getAllPages() throws SQLException {
+		ArrayList<Page> arr = new ArrayList<Page>();
 
 		Statement stmnt = this.connection.createStatement();
 		ResultSet rs = stmnt.executeQuery("SELECT * FROM Page");
 
 		while (rs.next()) {
 			String topicName = rs.getString("TopicName");
-			arr.add(topicName);
+            String posterName = rs.getString("PosterName");
+            
+            Page p = new Page(topicName, posterName);
+			arr.add(p);
 		}
 		return arr;
 	}
