@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class JDBCConnection {
 	private Connection connection;
@@ -92,6 +93,10 @@ public class JDBCConnection {
 		System.out.println(min);
 		System.out.println(max);
 		
+		// test commentInfo thread
+		HashMap<String, Integer> map = jd.CommentInfo("avg");
+		System.out.println(map);
+		
 
 	}
 	public JDBCConnection() {
@@ -99,7 +104,7 @@ public class JDBCConnection {
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 			System.out.println("Driver registered");
 			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1522:ug",
-				"beep", "boop");
+				"haha", "lol");
 			this.connection = con;
 		} catch (SQLException e) {
 			System.out.println("Couldn't conenct to the database, are you tunneled?");
@@ -231,18 +236,15 @@ public class JDBCConnection {
 	/*
 	 * Returns a list of all pages
 	 */
-	public ArrayList<Page> getAllPages() throws SQLException {
-		ArrayList<Page> arr = new ArrayList<Page>();
+	public ArrayList<String> getAllPages() throws SQLException {
+		ArrayList<String> arr = new ArrayList<String>();
 
 		Statement stmnt = this.connection.createStatement();
 		ResultSet rs = stmnt.executeQuery("SELECT * FROM Page");
 
 		while (rs.next()) {
 			String topicName = rs.getString("TopicName");
-            String posterName = rs.getString("PosterName");
-            
-            Page p = new Page(topicName, posterName);
-			arr.add(p);
+			arr.add(topicName);
 		}
 		return arr;
 	}
@@ -561,6 +563,25 @@ public class JDBCConnection {
 		}
 		return t;
 		
+	}
+	
+	// get the min comment score op="min"
+	// the max comment score op="max"
+	// the avg comment score op="avg"
+	// the count of comments op ="count"
+	
+	public HashMap<String, Integer> CommentInfo(String op) throws SQLException {
+		HashMap<String, Integer> threadVoteMap = new HashMap<String, Integer>();
+		Statement stmnt = this.connection.createStatement();
+		ResultSet rs = stmnt.executeQuery("SELECT + c.threadid, " + op + "(c.voteNum) FROM UserComment c, Thread t GROUP BY c.threadID HAVING c.threadID = t.threadID");
+
+		while (rs.next()) {
+			String threadid = rs.getString(1);
+			Integer votenum = rs.getInt(2);
+			threadVoteMap.put(threadid, votenum);
+		}
+
+		return threadVoteMap;
 	}
 
 }
