@@ -15,6 +15,12 @@ public class Page {
 	public String toString() {
 		return "Page; TopicName: " + this.topicName;
 	}
-	
 
+	public String getTopicName() {
+		return this.topicName;
+	}
+	public String getPosterName() {
+		return this.posterName;
+	}
+	
 }
