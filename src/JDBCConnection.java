@@ -37,48 +37,69 @@ public class JDBCConnection {
 		System.out.println(commentsOfThread);
 		
 //		 Test createUser(name, admin)
-		jd.createUser("testUser", false);
+//		jd.createUser("testUser", false);
+//		
+//		// test promote poster
+//		jd.promotePosterToAdmin("Sam");
+//		System.out.println("Sam is now the most powerful user on the site");
+//
+//		// test create thread(
+//		jd.createThread("api test thread", "el o el", "SamPage", "Diablo");
+//		System.out.println("success testing create thread");
+//		
+//		// test create comment
+//		jd.createComment("nice meme", "Sam", Integer.toString(pageThreads.get(0).threadID));
+//		System.out.println("success testing create comment");
+//		
+//		// test create page
+//		jd.createPage("memes", "Sam");
+//		System.out.println("success testing create page");
+//		
+//		// test create vote
+//		jd.createVote("Diablo", false, commentsOfThread.get(0).commID, true);
+//		System.out.println("success testing creating vote");
+//
+//		//test update comment
+//		jd.updateCommentOnVote("Diablo", true, commentsOfThread.get(0).commID);
+//		System.out.println("success testing create commentvote");
+//		
+//		// test update thread
+//		jd.updateThreadOnVote("Diablo", true, pageThreads.get(0).threadID);
+//		System.out.println("success testing create threadvote");
+//		
+//		// test create suggestion
+//		jd.createSuggestion("try harder lol", "Sam", "DiabloPage");
+//		System.out.println("success testing create suggestion");
 		
-		// test promote poster
-		jd.promotePosterToAdmin("Sam");
-		System.out.println("Sam is now the most powerful user on the site");
+		// TEST THE QUERY METODS ADDED -------------------------------------------------------
+		ArrayList<String> repabove = jd.selectUsersAboveX("reputation", 0);
+		System.out.println(repabove);
 
-		// test create thread(
-		jd.createThread("api test thread", "el o el", "SamPage", "Diablo");
-		System.out.println("success testing create thread");
+		ArrayList<String> idAbove = jd.selectAdminIDAboveX("reputation", 0);
+		System.out.println(idAbove);
 		
-		// test create comment
-		jd.createComment("nice meme", "Sam", Integer.toString(pageThreads.get(0).threadID));
-		System.out.println("success testing create comment");
+		// test suggestionsFromAdmins()
+		ArrayList<String> suggs = jd.suggestionsFromAdmins();
+		System.out.println(suggs);
 		
-		// test create page
-		jd.createPage("memes", "Sam");
-		System.out.println("success testing create page");
+		// test usersInAllThreads()
+		ArrayList<String> hasNoLife = jd.usersInAllThreads();
+		System.out.println(hasNoLife);
 		
-		// test create vote
-		jd.createVote("Diablo", false, commentsOfThread.get(0).commID, true);
-		System.out.println("success testing creating vote");
+		// test min/max thread
+		Thread min = jd.minOrMaxThread("<");
+		Thread max = jd.minOrMaxThread(">");
+		System.out.println(min);
+		System.out.println(max);
+		
 
-		//test update comment
-		jd.updateCommentOnVote("Diablo", true, commentsOfThread.get(0).commID);
-		System.out.println("success testing create commentvote");
-		
-		// test update thread
-		jd.updateThreadOnVote("Diablo", true, pageThreads.get(0).threadID);
-		System.out.println("success testing create threadvote");
-		
-		// test create suggestion
-		jd.createSuggestion("try harder lol", "Sam", "DiabloPage");
-		System.out.println("success testing create suggestion");
-		
-		
 	}
 	public JDBCConnection() {
 		try {
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 			System.out.println("Driver registered");
 			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1522:ug",
-				"username", "password");
+				"beep", "boop");
 			this.connection = con;
 		} catch (SQLException e) {
 			System.out.println("Couldn't conenct to the database, are you tunneled?");
@@ -444,5 +465,99 @@ public class JDBCConnection {
 		assert promote == 0;
 	}
 
+	// ADDITIONAL PROJECT DEMO METHODS, SPECIFIED ON TRELLO (PROJ, DELETE, ETC)
+	
+	// op is one of {"reputation", "numberofpages"}
+	// takes the op and gives the names of all users above <arg> with that value
+	public ArrayList<String> selectUsersAboveX(String op, int arg) throws SQLException {
+		ArrayList<String> names = new ArrayList<String>();
+		Statement stmnt = this.connection.createStatement();
+		ResultSet rs = stmnt.executeQuery("SELECT posterName FROM Poster " +
+											"WHERE " + op + " >= " + Integer.toString(arg) + "");
+		while (rs.next()) {
+			String pname = rs.getString(1);
+			boolean x = rs.wasNull();
+			if (!x) {
+				names.add(pname);
+			}
+		}
+		
+		return names;
+		
+	}
+	
+	public ArrayList<String> selectAdminIDAboveX(String op, int arg) throws SQLException {
+		ArrayList<String> ids = new ArrayList<String>();
+		Statement stmnt = this.connection.createStatement();
+		ResultSet rs = stmnt.executeQuery("SELECT adminID FROM Poster " +
+											"WHERE " + op + " >= " + Integer.toString(arg) + "");
+		while (rs.next()) {
+			String pname = rs.getString(1);
+			boolean x = rs.wasNull();
+			if (!x) {
+				ids.add(pname);
+			}
+		}
+		return ids;
+
+	}
+	
+	public ArrayList<String> suggestionsFromAdmins() throws SQLException {
+		ArrayList<String> sugIDs = new ArrayList<String>();
+		
+		Statement stmnt = this.connection.createStatement();
+		ResultSet rs = stmnt.executeQuery("SELECT sugID FROM Poster P, Suggestion S " +
+											"WHERE P.adminID is not null AND P.postername = S.postername");
+		while (rs.next()) {
+			String id = rs.getString(1);
+			sugIDs.add(id);
+		}
+		return sugIDs;
+	}
+	
+	public ArrayList<String> usersInAllThreads() throws SQLException {
+		ArrayList<String> posternames = new ArrayList<String>();
+		
+		Statement stmnt = this.connection.createStatement();
+		ResultSet rs = stmnt.executeQuery("SELECT postername FROM poster p WHERE NOT EXISTS ((SELECT t.threadID FROM thread t) MINUS " + 
+											"(SELECT c.threadid FROM usercomment c, thread t WHERE p.postername = c.postername AND " +
+											"c.threadid = t.threadid) )");
+		while (rs.next()) {
+			String id = rs.getString(1);
+			posternames.add(id);
+		}
+		return posternames;
+		
+	}
+	
+	
+	// Op is one of : {" < " or " > "}
+	// if <, gives the min
+	// if > gives the max
+	public Thread minOrMaxThread(String op) throws SQLException {
+		Statement stmnt = this.connection.createStatement();
+		ResultSet rs = stmnt.executeQuery("select * from thread t where t.votenum " + op + "= (select max(t1.votenum) from thread t1)");
+
+		Thread t = null;
+		while (rs.next()) {
+			int threadID= rs.getInt(1);
+			String title = rs.getString(2);
+			String text = rs.getString(3);
+			Time time = rs.getTime(4);
+			int voteNum = rs.getInt(5);
+			int lockedNum = rs.getInt(6);
+			boolean isLocked;
+			if (lockedNum == 0) {
+				isLocked = false;
+			} else {
+				isLocked = true;
+			}
+			String topicName = rs.getString(7);
+			String posterName = rs.getString(8);
+			t = new Thread(threadID, title, text, time, voteNum, isLocked, topicName, posterName);
+		}
+		return t;
+		
+	}
 
 }
