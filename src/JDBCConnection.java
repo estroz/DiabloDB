@@ -16,28 +16,28 @@ public class JDBCConnection {
 //	}
 
 	public static void main(String[] args) throws SQLException {
-		JDBCConnection jd = new JDBCConnection();
-		// Test each method, this is the getUsers()
-		ArrayList<Poster> users = jd.getUsers();
-		System.out.println(users.toString());
-
-		// Test getAllPages()
-		ArrayList<String> pages = jd.getAllPages();
-		System.out.println(pages.toString());
-
-		// Test getPageThreads(Topic)
-		ArrayList<Thread> pageThreads = jd.getPageThreads(pages.get(0));
-		System.out.println(pageThreads.toString());
-
-		// Test getSpecificUser(user)
-		ArrayList<ArrayList<Object>> aUser = jd.getSpecificUser(users.get(0).userName);
-		System.out.println(aUser);
-
-		// Test getThreadCOmments(thread)
-		ArrayList<Comment> commentsOfThread = jd.getThreadComments(Integer.toString(pageThreads.get(0).threadID));
-		System.out.println(commentsOfThread);
-		
-//		 Test createUser(name, admin)
+//		JDBCConnection jd = new JDBCConnection();
+//		// Test each method, this is the getUsers()
+//		ArrayList<Poster> users = jd.getUsers();
+//		System.out.println(users.toString());
+//
+//		// Test getAllPages()
+//		ArrayList<String> pages = jd.getAllPages();
+//		System.out.println(pages.toString());
+//
+//		// Test getPageThreads(Topic)
+//		ArrayList<Thread> pageThreads = jd.getPageThreads(pages.get(0));
+//		System.out.println(pageThreads.toString());
+//
+//		// Test getSpecificUser(user)
+//		ArrayList<ArrayList<Object>> aUser = jd.getSpecificUser(users.get(0).getUserName());
+//		System.out.println(aUser);
+//
+//		// Test getThreadComments(thread)
+//		ArrayList<Comment> commentsOfThread = jd.getThreadComments(pageThreads.get(0).getThreadID());
+//		System.out.println(commentsOfThread);
+//		
+//		// test createUser(name, admin)
 //		jd.createUser("testUser", false);
 //		
 //		// test promote poster
@@ -49,7 +49,7 @@ public class JDBCConnection {
 //		System.out.println("success testing create thread");
 //		
 //		// test create comment
-//		jd.createComment("nice meme", "Sam", Integer.toString(pageThreads.get(0).threadID));
+//		jd.createComment("nice meme", "Sam", pageThreads.get(0).getThreadID());
 //		System.out.println("success testing create comment");
 //		
 //		// test create page
@@ -57,48 +57,47 @@ public class JDBCConnection {
 //		System.out.println("success testing create page");
 //		
 //		// test create vote
-//		jd.createVote("Diablo", false, commentsOfThread.get(0).commID, true);
+//		jd.createVote("Diablo", false, commentsOfThread.get(0).getCommID(), true);
 //		System.out.println("success testing creating vote");
 //
 //		//test update comment
-//		jd.updateCommentOnVote("Diablo", true, commentsOfThread.get(0).commID);
+//		jd.updateCommentOnVote("Diablo", true, commentsOfThread.get(0).getCommID());
 //		System.out.println("success testing create commentvote");
 //		
 //		// test update thread
-//		jd.updateThreadOnVote("Diablo", true, pageThreads.get(0).threadID);
+//		jd.updateThreadOnVote("Diablo", true, pageThreads.get(0).getThreadID());
 //		System.out.println("success testing create threadvote");
 //		
 //		// test create suggestion
 //		jd.createSuggestion("try harder lol", "Sam", "DiabloPage");
 //		System.out.println("success testing create suggestion");
-		
-		// TEST THE QUERY METODS ADDED -------------------------------------------------------
-		ArrayList<String> repabove = jd.selectUsersAboveX("reputation", 0);
-		System.out.println(repabove);
-
-		ArrayList<String> idAbove = jd.selectAdminIDAboveX("reputation", 0);
-		System.out.println(idAbove);
-		
-		// test suggestionsFromAdmins()
-		ArrayList<String> suggs = jd.suggestionsFromAdmins();
-		System.out.println(suggs);
-		
-		// test usersInAllThreads()
-		ArrayList<String> hasNoLife = jd.usersInAllThreads();
-		System.out.println(hasNoLife);
-		
-		// test min/max thread
-		Thread min = jd.minOrMaxThread("<");
-		Thread max = jd.minOrMaxThread(">");
-		System.out.println(min);
-		System.out.println(max);
-		
-		// test commentInfo thread
-		HashMap<String, Integer> map = jd.CommentInfo("avg");
-		System.out.println(map);
-		
-
+//		
+//		// TEST THE QUERY METODS ADDED -------------------------------------------------------
+//		ArrayList<String> repabove = jd.selectUsersAboveX("reputation", 0);
+//		System.out.println(repabove);
+//
+//		ArrayList<String> idAbove = jd.selectAdminIDAboveX("reputation", 0);
+//		System.out.println(idAbove);
+//		
+//		// test suggestionsFromAdmins()
+//		ArrayList<String> suggs = jd.suggestionsFromAdmins();
+//		System.out.println(suggs);
+//		
+//		// test usersInAllThreads()
+//		ArrayList<String> hasNoLife = jd.usersInAllThreads();
+//		System.out.println(hasNoLife);
+//		
+//		// test min/max thread
+//		Thread min = jd.minOrMaxThread("<");
+//		Thread max = jd.minOrMaxThread(">");
+//		System.out.println(min);
+//		System.out.println(max);
+//		
+//		// test commentInfo thread
+//		HashMap<String, Integer> map = jd.CommentInfo("avg");
+//		System.out.println(map);
 	}
+	
 	public JDBCConnection() {
 		try {
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
@@ -109,7 +108,7 @@ public class JDBCConnection {
 		} catch (SQLException e) {
 			System.out.println("Couldn't conenct to the database, are you tunneled?");
 		}
-		System.out.println("Conencted to db");
+		System.out.println("Connected to db");
 
 	}
 
@@ -292,7 +291,7 @@ public class JDBCConnection {
 		int numberOfPosters = currentPosters.size();
 		while (i < numberOfPosters){
 			// Check if username was already taken
-			if (currentPosters.get(i).userName.equals(userName)) {
+			if (currentPosters.get(i).getUserName().equals(userName)) {
 				// TODO: send notice to GUI and disallow name creation
 				System.err.println("Username already taken. Please choose another.");
 			}
