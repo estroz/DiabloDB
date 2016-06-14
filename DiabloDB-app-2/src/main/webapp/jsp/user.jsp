@@ -27,32 +27,12 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="index.html">DiabloDB <span class="glyphicon glyphicon-fire" aria-hidden="true"></a>
+          <a class="navbar-brand" href="jsp/index.jsp">DiabloDB <span class="glyphicon glyphicon-fire" aria-hidden="true"></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li><a href="pages_list.html">Your Pages</a></li>
-            <li><a href="threads_list.html">Your Threads</a></li>
-            <li><a href="comments_list.html">Your Comments</a></li>
-          </ul>
-                      <ul class="nav navbar-nav navbar-right">
-            <li class="active"><a href="user.html">Profile</a></li>
-            <li><a id="login" href="sign_in.html">Log in</a></li>
-            <!-- <li><a id="logout" href="sign_in.html">Log out</a></li> -->
-            <!-- <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li role="separator" class="divider"></li>
-                <li class="dropdown-header">Nav header</li>
-                <li><a href="#">Separated link</a></li>
-                <li><a href="#">One more separated link</a></li>
-              </ul>
-            </li> -->
-          </ul>
-          </ul>
+            <li><a href="/poster?action=getUsers">All users</a></li>
+          </ul>           
         </div><!--/.nav-collapse -->
       </div>
     </nav>
@@ -60,43 +40,52 @@
     <div class="container theme-showcase" role="main">
 
       <div class="page-header">
-        <h2>Poster's main page</h2>
+        <h2>Users</h2>
       </div>
 
       <div class="row">
         <div class="col-md-12">
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <th class="col-sm-1 col-lg-1">Status</th>
-                <th class="col-sm-1 col-lg-1">Type</th>
-                <th>Thread Name</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="col-sm-1 col-lg-1"><span class="label label-success"></span></td>
-                <td class="col-sm-1 col-lg-1"><a href="page.html">Page</a></td>
-                <td><a href="page.html">What stuff do you have in your closet?</a></td>
-              </tr>
-              <tr>
-                <td class="col-sm-1 col-lg-1"><span class="label label-default">Neutral</span></td>
-                <td class="col-sm-1 col-lg-1"><a href="page.html">Thread</td></a>
-                <td><a href="page.html">Backhoes and fronthoes: the great debate</t></a>
-              </tr>
-              <tr>
-                <td class="col-sm-1 col-lg-1"><span class="label label-danger"></span></td>
-                <td class="col-sm-1 col-lg-1"><a href="page.html">Page</a></td>
-                <td><a href="page.html">SauceGoss</a></td>
-              </tr>
-              <tr>
-                <td class="col-sm-1 col-lg-1"><span class="label label-success">Rising</span></td>
-                <td class="col-sm-1 col-lg-1"><a href="page.html">Comment</a></td>
-                <td><a href="page.html">Do you even go here?</a></td>
-              </tr>
+          
+          <!-- ADDED FOR JSP STUFF -->
+          <form action="/poster" method="get" id="pageForm" role="form" >              
+            <c:choose>
+              <c:when test="${not empty users}">
+                <table  class="table table-striped">
+                  <thead>
+                      <tr>
+                          <th>Poster name</th>
+                          <th>Reputation</th>
+                          <th>Number of pages</th>
+                          <th>Admin?</th>
+                      </tr>
+                  </thead>
+                  <c:forEach var="user" items="${users}">
+                      <tr>
+                          <td>${user.userName}</td>
+                          <td>${user.reputation}</td>
+                          <td>${user.numberOfPages}</td>
+                          <c:choose>
+                            <c:when test="${user.adminID != null}">
+                                <td>Yes</td>
+                            </c:when>    
+                            <c:otherwise>
+                                <td>No</td>
+                            </c:otherwise>
+                          </c:choose>
+                      </tr>
+                  </c:forEach>
+                </table>
+               </c:when>                    
+                  <c:otherwise>
+                      <br>           
+                      <div class="alert alert-info">
+                          No users.
+                      </div>
+                  </c:otherwise>
+            </c:choose>
+          </form>
+          <!-- ADDED FOR JSP STUFF -->
 
-            </tbody>
-          </table>
         </div>
       </div>
 

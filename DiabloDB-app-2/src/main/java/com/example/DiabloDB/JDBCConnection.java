@@ -105,7 +105,7 @@ public class JDBCConnection {
             DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
             System.out.println("Driver registered");
             Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1522:ug",
-                                                         "uname", "pw");
+                                                         "user", "pass");
             this.connection = con;
         } catch (SQLException e) {
             System.out.println("Couldn't conenct to the database, are you tunneled?");
@@ -125,6 +125,7 @@ public class JDBCConnection {
 
         while (rs.next()) {
             String curName = rs.getString("PosterName");
+            System.out.println(curName);
             int rep = rs.getInt(2);
             int numPages = rs.getInt(3);
             arr.add(new Poster(curName, rep, numPages, null));
@@ -320,7 +321,6 @@ public class JDBCConnection {
      */
     public void createPage(String topicName, String posterName) throws SQLException {
         // TODO: Implement asserts in main(), should be checked upon insertion into db, by the db
-        System.out.println("in create page");
         assert topicName != null;
         assert posterName != null;
         Statement stmnt = this.connection.createStatement();

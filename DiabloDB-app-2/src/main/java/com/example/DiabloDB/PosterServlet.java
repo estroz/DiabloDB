@@ -156,17 +156,16 @@ public class PosterServlet extends HttpServlet {
 	}
 
 	private void getUsers(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		// ArrayList<Poster> users = null;
-		// try {
-		// 	users = jdbcc.getUsers();
-		// } catch (SQLException e) {
-		// 	Logger.getLogger(PosterServlet.class.getName()).log(Level.SEVERE, null, e);
-		// }
-		
-		// req.setAttribute("users", users);
-		// String nextJsp = "/jsp/index.jsp";
-		// RequestDispatcher d = getServletContext().getRequestDispatcher(nextJsp);
-		// d.forward(req, res);
+		ArrayList<Poster> users = null;
+		try {
+			users = jdbcc.getUsers();
+		} catch (SQLException e) {
+			Logger.getLogger(PosterServlet.class.getName()).log(Level.SEVERE, null, e);
+		}
+		req.setAttribute("users", users);
+		String nextJsp = "/jsp/user.jsp";
+		RequestDispatcher d = getServletContext().getRequestDispatcher(nextJsp);
+		d.forward(req, res);
 	}
 
 	private void getAllPages(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {

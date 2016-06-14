@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html lang="en">
   <head>
@@ -31,26 +32,7 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li><a href="jsp/pages_list.jsp">Your Pages</a></li>
-            <li><a href="jsp/threads_list.jsp">Your Threads</a></li>
-            <li><a href="jsp/comments_list.jsp">Your Comments</a></li>
-          </ul>
-                      <ul class="nav navbar-nav navbar-right">
-            <li><a href="jsp/user.jsp">Profile</a></li>
-            <li><a id="login" href="jsp/sign_in.jsp">Log in</a></li>
-            <!-- <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li role="separator" class="divider"></li>
-                <li class="dropdown-header">Nav header</li>
-                <li><a href="#">Separated link</a></li>
-                <li><a href="#">One more separated link</a></li>
-              </ul>
-            </li> -->
-          </ul>
+            <li><a href="/poster?action=getUsers">All users</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -72,23 +54,20 @@
         <div class="col-md-12">
 
           <!-- ADDED FOR JSP STUFF -->
-
-          <!-- List of pages -->
           <form action="/poster" method="get" id="pageForm" role="form" >              
             <c:choose>
               <c:when test="${not empty pages}">
                 <table  class="table table-striped">
                   <thead>
                       <tr>
-                          <td>Page</td>
-                          <td>Created by</td>
-                          <td></td>
+                          <th>Status</th>
+                          <th>Page</th>
+                          <th>Created by</th>
                       </tr>
                   </thead>
                   <c:forEach var="page" items="${pages}">
                       <tr>
-                          <th>Status</th>
-                          <td><span class="label label-success">Rising</span></td>
+                          <td><span class="label label-default">Neutral</span></td>
                           <td>                          
                             <a href="/poster?action=getPageThreads&topicName=${page.topicName}">${page.topicName}</a>
                           </td>
@@ -110,28 +89,6 @@
         </div>
       </div>
     </div> <!-- /container -->
-
-    <div class="container">
-        <nav>
-      <ul class="pagination">
-        <li>
-          <a href="#" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-        <li><a href="#">1</a></li>
-        <li><a href="#">2</a></li>
-        <li><a href="#">3</a></li>
-        <li><a href="#">4</a></li>
-        <li><a href="#">5</a></li>
-        <li>
-          <a href="#" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
-    </div>
 
 
     <!-- Bootstrap core JavaScript
