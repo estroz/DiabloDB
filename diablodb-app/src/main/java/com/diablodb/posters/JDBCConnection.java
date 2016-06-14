@@ -105,7 +105,7 @@ public class JDBCConnection {
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 			System.out.println("Driver registered");
 			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1522:ug",
-				"ora_b9e8", "a53862108");
+				"ora_uname", "aSTUDNO");
 			this.connection = con;
 		} catch (SQLException e) {
 			e.printStackTrace();
