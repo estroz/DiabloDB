@@ -40,11 +40,11 @@
     <div class="container theme-showcase" role="main">
 
       <div class="page-header">
-        <h3>Topic Name<h3>
+        <h3>Page: ${topicName}<h3>
       </div>
 
       <div class="sidebar">
-        <a href="jsp/create_thread.jsp?topic=${topic}"><button class="btn btn-primary">Create Thread</button></a>
+        <a href="jsp/create_thread.jsp?topicName=${topicName}"><button class="btn btn-primary">Create Thread</button></a>
       </div>
 
       <div class="row">
@@ -52,66 +52,89 @@
 
           <!-- ADDED FOR JSP -->
           <!-- List of pages -->
-          <form action="/poster" method="get" id="threadForm" role="form" >              
-            <c:choose>
-              <c:when test="${not empty threads}">
-                <h2>${topic}</h2>
-                <table  class="table table-striped">
-                  <thead>
-                      <tr>
-                          <td>Votes</td>
-                          <td>Thread</td>
-                          <td>Poster</td>
-                      </tr>
-                  </thead>
-                  <c:forEach var="thread" items="${threads}">
-                      <tr>
-                          <td>${thread.voteNum}</td>
-                          <td>
-                            <a href="/poster?action=getThreadComments&threadID=${thread.threadID}">${thread.title}</a>
-                          </td>
-                          <td>${thread.posterName}</td>
-                      </tr>
-                  </c:forEach>
-                </table>
-               </c:when>                    
-                  <c:otherwise>
-                      <br>           
-                      <div class="alert alert-info">
-                          No threads.
-                      </div>
-                  </c:otherwise>
-            </c:choose>
+          <form action="/poster" method="get" id="threadForm" role="form" > 
+          <c:choose>
+            <c:when test="${not empty message}">
+                <div class="alert alert-info"> ${message} </div>
+            </c:when>
+            <c:otherwise>                 
+              <c:choose>
+                <c:when test="${not empty threads}">
+                  <h2>${topic}</h2>
+                  <table  class="table table-striped">
+                    <thead>
+                        <tr>
+                            <td></td>
+                            <td>Votes</td>
+                            <td>Thread</td>
+                            <td>Poster</td>
+                        </tr>
+                    </thead>
+                    <c:forEach var="thread" items="${threads}">
+                        <tr>
+                            <td>
+                              <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal">Vote</button>
+                              <!-- Modal -->
+                              <div class="modal fade" id="myModal" role="dialog">
+                                <div class="modal-dialog">
+                                
+                                  <!-- Modal content-->
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h4 class="modal-title">Vote</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                      <!-- JSP -->
+                                      <form action="/poster" method="post"  role="form" data-toggle="validator" >
+                                        <input type="hidden" id="action" name="action" value="createVote">
+                                        <input type="hidden" id="isComment" name="isComment" value="false">
+                                        <input type="hidden" id="id" name="id" value="${thread.threadID}">
+                                        <input type="hidden" id="topicName" name="topicName" value="${thread.topicName}">
+                                        <fieldset class="form-group">
+                                          <label class="control-label col-xs-4">Poster name:</label>
+                                          <input type="text" name="posterName" id="posterName" class="form-control" required="true"/>
+                                        </fieldset>
+                                        <fieldset>                                   
+                                          <div class="radio">
+                                            <label><input type="radio" name="voteType" value="true">Upvote</label>
+                                          </div>
+                                          <div class="radio">
+                                            <label><input type="radio" name="voteType" value ="false">Downvote</label>
+                                          </div> 
+                                        </fieldset>
+                                          <br></br>
+                                          <button type="submit" class="btn btn-primary  btn-md">Vote</button> 
+                                      </form>
+                                    </div>
+                                  </div>
+                                  
+                                </div>
+                              </div>
+                              <!-- /Modal -->
+                            </td>
+                            <td>${thread.voteNum}</td>
+                            <td>
+                              <a href="/poster?action=getThreadComments&threadID=${thread.threadID}&title=${thread.title}">${thread.title}</a>
+                            </td>
+                            <td>${thread.posterName}</td>
+                        </tr>
+                    </c:forEach>
+                  </table>
+                 </c:when>                    
+                    <c:otherwise>
+                        <br>           
+                        <div class="alert alert-info">
+                            No threads.
+                        </div>
+                    </c:otherwise>
+              </c:choose>
+            </c:otherwise>
+          </c:choose>
           </form>
           <!-- ADDED FOR JSP STUFF -->
 
         </div>
       </div>
-
-
-    </div> <!-- /container -->
-    <div class="container">
-        <nav>
-      <ul class="pagination">
-        <li>
-          <a href="#" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-        <li><a href="#">1</a></li>
-        <li><a href="#">2</a></li>
-        <li><a href="#">3</a></li>
-        <li><a href="#">4</a></li>
-        <li><a href="#">5</a></li>
-        <li>
-          <a href="#" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
-    </div>
-
 
     <!-- Bootstrap core JavaScript
     ================================================== -->

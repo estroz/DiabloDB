@@ -29,6 +29,10 @@ public class PosterServlet extends HttpServlet {
 		if (action != null) {
 			switch (action) {
 			// Gets
+            // The form from the modal does not want to go to post
+            case "createVote":
+                createVote(req, res);
+                break;
 			case "getAllPages":
 				getAllPages(req, res);
 				break;
@@ -110,15 +114,23 @@ public class PosterServlet extends HttpServlet {
 
 
 	private void getThreadComments(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        System.out.println(req.getParameter("message"));
 		ArrayList<Comment> comments = null;
 		String threadID = req.getParameter("threadID");
+        String title = req.getParameter("title");
+        String message = null;
+        if(req.getAttribute("message") != null) message = req.getAttribute("message").toString();
+        
 		try {
 			comments = jdbcc.getThreadComments(threadID);
 		} catch (SQLException e) {
 			Logger.getLogger(PosterServlet.class.getName()).log(Level.SEVERE, null, e);
 		}
 		
+        req.setAttribute("message", message);
 		req.setAttribute("comments", comments);
+        req.setAttribute("title", title);
+        req.setAttribute("threadID", threadID);
 		String nextJsp = "/jsp/thread.jsp";
 		RequestDispatcher d = getServletContext().getRequestDispatcher(nextJsp);
 		d.forward(req, res);	
@@ -127,14 +139,18 @@ public class PosterServlet extends HttpServlet {
 	private void getPageThreads(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		ArrayList<Thread> threads = null;
 		String topicName = req.getParameter("topicName");
+        String message = null;
+        if(req.getAttribute("message") != null) message = req.getAttribute("message").toString();
+        
 		try {
 			threads = jdbcc.getPageThreads(topicName);
 		} catch (SQLException e) {
 			Logger.getLogger(PosterServlet.class.getName()).log(Level.SEVERE, null, e);
 		}
 		
+        req.setAttribute("message", message);
 		req.setAttribute("threads", threads);
-        req.setAttribute("topic", topicName);
+        req.setAttribute("topicName", topicName);
 		String nextJsp = "/jsp/page.jsp";
 		RequestDispatcher d = getServletContext().getRequestDispatcher(nextJsp);
 		d.forward(req, res);
@@ -229,47 +245,60 @@ public class PosterServlet extends HttpServlet {
 	}
 
 	private void createVote(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		// String posterName = req.getParameter("posterName");
-		// String voteType = req.getParameter("isUpvote");
-		// String id = req.getParameter("id");
-		// String objectType = req.getParameter("isComment");
-		// // Convert strings to boolean values
-		// boolean isUpvote = false;
-		// if (voteType.equals("true")) isUpvote = true;
-		// boolean isComment = true;
-		// if (objectType.equals("false")) isComment = false;
-		// try {
-		// 	jdbcc.createVote(posterName, isUpvote, id, isComment);
-		// } catch (SQLException e) {
-		// 	Logger.getLogger(PosterServlet.class.getName()).log(Level.SEVERE, null, e);
-		// }
-		// String message = "You have successfully voted!";
-		// req.setAttribute("message", message);
-		// // Load comment (most common) or thread depending on vote type
-		// String nextJsp = "/jsp/comment.jsp";
-		// if (!isComment) nextJsp = "/jsp/thread.jsp";
-		// RequestDispatcher d = getServletContext().getRequestDispatcher(nextJsp);
-		// d.forward(req, res);
+		 String posterName = req.getParameter("posterName");
+		 String voteType = req.getParameter("voteType");
+		 String id = req.getParameter("id");
+		 String objectType = req.getParameter("isComment");
+         String topicName = req.getParameter("topicName");
+         String threadID = req.getParameter("threadID");
+         String title = req.getParameter("title");
+         String message = null;
+        
+		 // Convert strings to boolean values
+		 boolean isUpvote = false;
+		 if (voteType.equals("true")) isUpvote = true;
+		 boolean isComment = true;
+		 if (objectType.equals("false")) isComment = false;
+		 try {
+		 	jdbcc.createVote(posterName, isUpvote, id, isComment);
+		 } catch (SQLException e) {
+		 	Logger.getLogger(PosterServlet.class.getName()).log(Level.SEVERE, null, e);
+            message = "Unsuccessful vote. Either the poster does not exist or has already voted";
+		 }
+		 // Load comment (most common) or thread depending on vote type
+
+        req.setAttribute("message", message);
+        if(!isComment) {
+            req.setAttribute("topicName", topicName);
+            getPageThreads(req, res);
+        } else {
+            req.setAttribute("threadID", threadID);
+            req.setAttribute("title", title);
+            getThreadComments(req, res);
+        }
+        
 	}
 
 	private void createComment(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		// String text = req.getParameter("text");
-		// String threadID = req.getParameter("posterName");
-		// String posterName = req.getParameter("posterName");
-		// try {
-		// 	jdbcc.createComment(text, posterName, threadID);
-		// } catch (SQLException e) {
-		// 	Logger.getLogger(PosterServlet.class.getName()).log(Level.SEVERE, null, e);
-		// }
-		// String message = "Your comment has been successfully posted!";
-		// req.setAttribute("message", message);
-		// String nextJsp = "/jsp/thread.jsp";
-		// RequestDispatcher d = getServletContext().getRequestDispatcher(nextJsp);
-		// d.forward(req, res);
+		 String text = req.getParameter("text");
+		 String threadID = req.getParameter("threadID");
+		 String posterName = req.getParameter("posterName");
+         String title = req.getParameter("title");
+		 try {
+		 	jdbcc.createComment(text, posterName, threadID);
+		 } catch (SQLException e) {
+		 	Logger.getLogger(PosterServlet.class.getName()).log(Level.SEVERE, null, e);
+		 }
+		 String message = "Your comment has been successfully posted!";
+		 req.setAttribute("message", message);
+         req.setAttribute("title", title);
+         req.setAttribute("threadID", threadID);
+         getThreadComments(req, res);
+
 	}
 
 	private void createThread(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		 String threadTitle = req.getParameter("posterName");
+		 String threadTitle = req.getParameter("title");
 		 String text = req.getParameter("text");
 		 String topicName = req.getParameter("topicName");
 		 String posterName = req.getParameter("posterName");
@@ -281,17 +310,12 @@ public class PosterServlet extends HttpServlet {
 		 String message = threadTitle + " has been created in " + topicName + ".";
 		 req.setAttribute("message", message);
          req.setAttribute("topicName", topicName);
-//		 String nextJsp = "/jsp/thread.jsp";
-//		 RequestDispatcher d = getServletContext().getRequestDispatcher(nextJsp);
-//		 d.forward(req, res);
          getPageThreads(req, res);
 	}
 
 	private void createPage(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		String topicName = req.getParameter("topicName");
 		String posterName = req.getParameter("posterName");
-		System.out.println(topicName);
-		System.out.println(posterName);
 		try {
 			jdbcc.createPage(topicName, posterName);
 		} catch (SQLException e) {

@@ -29,31 +29,11 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="index.html">DiabloDB <span class="glyphicon glyphicon-fire" aria-hidden="true"></a>
+          <a class="navbar-brand" href="/poster">DiabloDB <span class="glyphicon glyphicon-fire" aria-hidden="true"></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li><a href="pages_list.html">Your Pages</a></li>
-            <li><a href="threads_list.html">Your Threads</a></li>
-            <li><a href="comments_list.html">Your Comments</a></li>
-            <li><a href="user.html">Profile</a></li>
-          </ul>
-                      <ul class="nav navbar-nav navbar-right">
-            <li><a id="login" href="sign_in.html">Log in</a></li>
-            <!-- <li><a id="logout" href="sign_in.html">Log out</a></li> -->
-            <!-- <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li role="separator" class="divider"></li>
-                <li class="dropdown-header">Nav header</li>
-                <li><a href="#">Separated link</a></li>
-                <li><a href="#">One more separated link</a></li>
-              </ul>
-            </li> -->
-          </ul>
+            <li><a href="/poster?action=getUsers">All users</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -61,11 +41,22 @@
 
     <div class="container theme-showcase" role="main">
 
-      <fieldset class="form-group">
-        <label for="exampleTextarea">Comment text:</label>
-        <textarea class="form-control" rows="4"></textarea>
-      </fieldset>
-      <a href="index.html"><button class="btn btn-primary">Create</button></a>
+      <!-- JSP -->
+        <form action="/poster" method="post"  role="form" data-toggle="validator" >
+          <input type="hidden" id="action" name="action" value="createComment">
+          <input type="hidden" id="threadID" name="threadID" value="<%= request.getParameter("threadID")%>">
+          <input type="hidden" id="title" name="title" value="<%= request.getParameter("title")%>">
+          <h2>Create Comment</h2>                                
+            <label class="control-label col-xs-4">Poster name:</label>                   
+            <input type="text" name="posterName" id="posterName" class="form-control" value="${comment.poster}" required="true"/> 
+          </fieldset>
+          <fieldset>                                   
+            <label class="control-label col-xs-4">Text:</label>                   
+            <input type="text" name="text" id="text" class="form-control" value="${comment.text}" required="true"/> 
+          </fieldset>
+            <br></br>
+            <button type="submit" class="btn btn-primary  btn-md">Create</button>                                                    
+        </form>
 
     </div> <!-- /container -->
 

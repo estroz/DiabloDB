@@ -44,11 +44,11 @@
         <!-- JSP -->
         <form action="/poster" method="post"  role="form" data-toggle="validator" >
           <input type="hidden" id="action" name="action" value="createThread">
-          <input type="hidden" id="topicName" name="topicName" value="${topic}">
+          <input type="hidden" id="topicName" name="topicName" value="<%= request.getParameter("topicName")%>">
           <h2>Create Thread</h2>
           <fieldset class="form-group">
             <label class="control-label col-xs-4">Thread title:</label>
-            <input type="text" name="topicName" id="topicName" class="form-control" value="${thread.topicName}" required="true"/>
+            <input type="text" name="title" id="title" class="form-control" value="${thread.title}" required="true"/>
           </fieldset>
           <fieldset>                                   
             <label class="control-label col-xs-4">Poster name:</label>                   
@@ -56,7 +56,7 @@
           </fieldset>
           <fieldset>                                   
             <label class="control-label col-xs-4">Description:</label>                   
-            <input type="text" name="posterName" id="posterName" class="form-control" value="${thread.posterName}" required="true"/> 
+            <input type="text" name="text" id="text" class="form-control" value="${thread.text}" required="true"/> 
           </fieldset>
             <br></br>
             <button type="submit" class="btn btn-primary  btn-md">Create</button>                                                    

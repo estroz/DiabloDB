@@ -105,7 +105,7 @@ public class JDBCConnection {
             DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
             System.out.println("Driver registered");
             Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1522:ug",
-                                                         "user", "pass");
+                                                         "ora_e9k0b", "a58306151");
             this.connection = con;
         } catch (SQLException e) {
             System.out.println("Couldn't conenct to the database, are you tunneled?");
@@ -224,7 +224,6 @@ public class JDBCConnection {
             }
             String topicName = rs.getString(7);
             String posterName = rs.getString(8);
-
             Thread t = new Thread(id, title, text, time, voteNum, isLocked, topicName, posterName);
             arr.add(t);
 
@@ -353,7 +352,7 @@ public class JDBCConnection {
         assert topicName != null;
         assert posterName != null;
         Statement stmnt = this.connection.createStatement();
-        int newThread = stmnt.executeUpdate("INSERT INTO Thread VALUES (id_seq.NEXTVAL, '" + threadTitle + "', '"+text+"', current_timestamp, 1, 0, '"+topicName+"', '"+posterName+"')");
+        int newThread = stmnt.executeUpdate("INSERT INTO Thread VALUES (id_seq.NEXTVAL, '" + threadTitle + "', '"+text+"', current_timestamp, 0, 0, '"+topicName+"', '"+posterName+"')");
         assert newThread == 0;
     }
 
@@ -370,7 +369,7 @@ public class JDBCConnection {
             throw new SQLException("Thread is locked. You cannot comment on a locked thread.");
         }
         Statement stmnt = this.connection.createStatement();
-        int newComment = stmnt.executeUpdate("INSERT INTO UserComment VALUES (id_seq.NEXTVAL, '"+text+"', 1, current_timestamp, '"+posterName+"', "+threadID+")");
+        int newComment = stmnt.executeUpdate("INSERT INTO UserComment VALUES (id_seq.NEXTVAL, '"+text+"', 0, current_timestamp, '"+posterName+"', "+threadID+")");
         assert newComment == 0;
     }
 
@@ -378,14 +377,14 @@ public class JDBCConnection {
      * Update the comment voted on
      * @param: posterName, commID should be found and passed in via query result
      */
-    public void updateCommentOnVote(String posterName, boolean isUpvote, int commID) throws SQLException {
+    public void updateCommentOnVote(String posterName, boolean isUpvote, String commID) throws SQLException {
         // TODO: Implement asserts in main(), should be checked upon insertion into db, by the db
         assert posterName != null;
         //		assert commID != null;
         Statement stmnt = this.connection.createStatement();
         int vote = -1;
         if (isUpvote) vote = 1;
-        int updatedComment = stmnt.executeUpdate("UPDATE UserComment SET voteNum = voteNum + "+vote+" WHERE PosterName = '"+posterName+"' AND CommID = '"+commID+"'");
+        int updatedComment = stmnt.executeUpdate("UPDATE UserComment SET voteNum = voteNum + "+vote+" WHERE CommID = "+commID+"");
         assert updatedComment == 0;
     }
 
@@ -393,14 +392,14 @@ public class JDBCConnection {
      * Update the thread voted on
      * @param: posterName, threadID should be found and passed in via query result
      */
-    public void updateThreadOnVote(String posterName, boolean isUpvote, int threadID) throws SQLException {
+    public void updateThreadOnVote(String posterName, boolean isUpvote, String threadID) throws SQLException {
         // TODO: Implement asserts in main(), should be checked upon insertion into db, by the db
         assert posterName != null;
         //		assert threadID != null;
         Statement stmnt = this.connection.createStatement();
         int vote = -1;
         if (isUpvote) vote = 1;
-        int updatedThread = stmnt.executeUpdate("UPDATE Thread SET voteNum = voteNum + "+vote+" WHERE PosterName = '"+posterName+"' AND ThreadID = '"+threadID+"'");
+        int updatedThread = stmnt.executeUpdate("UPDATE Thread SET voteNum = voteNum + "+vote+" WHERE ThreadID = "+threadID+"");
         assert updatedThread == 0;
     }
 
@@ -410,7 +409,7 @@ public class JDBCConnection {
      * @param: posterName, ID should be found and passed in via query result
      * @param: isUpvote is true for upvote, false for downvote
      */
-    public void createVote(String posterName, boolean isUpvote, int id, boolean isComment) throws SQLException {
+    public void createVote(String posterName, boolean isUpvote, String id, boolean isComment) throws SQLException {
         // TODO: Implement asserts in main(), should be checked upon insertion into db, by the db
         assert posterName != null;
         //		assert id != null;
@@ -421,11 +420,11 @@ public class JDBCConnection {
         if (isUpvote) vote = 1;
         // If vote is on a comment, update comments, else update threads
         if (isComment) {
-            int commentVote = stmnt.executeUpdate("INSERT INTO CommentVote VALUES ('"+posterName+"', "+vote+", "+Integer.toString(id)+")");
+            int commentVote = stmnt.executeUpdate("INSERT INTO CommentVote VALUES ('"+posterName+"', "+vote+", "+id+")");
             assert commentVote == 0;
             updateCommentOnVote(posterName, isUpvote, id);
         } else {
-            int threadVote = stmnt.executeUpdate("INSERT INTO ThreadVote VALUES ('"+posterName+"', "+vote+", '"+Integer.toString(id)+")");
+            int threadVote = stmnt.executeUpdate("INSERT INTO ThreadVote VALUES ('"+posterName+"', "+vote+", "+id+")");
             assert threadVote == 0;
             updateThreadOnVote(posterName, isUpvote, id);
         }
