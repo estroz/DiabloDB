@@ -105,7 +105,7 @@ public class JDBCConnection {
             DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
             System.out.println("Driver registered");
             Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1522:ug",
-                                                         "uname", "pw");
+                                                         "ora_e9k0b", "a58306151");
             this.connection = con;
         } catch (SQLException e) {
             System.out.println("Couldn't conenct to the database, are you tunneled?");
