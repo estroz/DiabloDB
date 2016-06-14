@@ -11,12 +11,12 @@ import java.util.HashMap;
 
 public class JDBCConnection {
     private Connection connection;
-    
+
     //	private Integer getNewID() throws SQLException {
     //		Statement stmt = this.connection.createStatement();
     //		ResultSet rs = stmt.executeQuery("SELECT * FROM Poster");
     //	}
-    
+
     public static void main(String[] args) throws SQLException {
         //		JDBCConnection jd = new JDBCConnection();
         //		// Test each method, this is the getUsers()
@@ -99,40 +99,40 @@ public class JDBCConnection {
         //		HashMap<String, Integer> map = jd.CommentInfo("avg");
         //		System.out.println(map);
     }
-    
+
     public JDBCConnection() {
         try {
             DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
             System.out.println("Driver registered");
             Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1522:ug",
-                                                         "ora_e9k0b", "a58306151");
+                                                         "uname", "pw");
             this.connection = con;
         } catch (SQLException e) {
             System.out.println("Couldn't conenct to the database, are you tunneled?");
         }
         System.out.println("Connected to db");
-        
+
     }
-    
+
     /*
      * Returns all users on the site in Poster objects.
      */
     public ArrayList<Poster> getUsers() throws SQLException {
         ArrayList<Poster> arr = new ArrayList<Poster>();
-        
+
         Statement stmt = this.connection.createStatement();
         ResultSet rs = stmt.executeQuery("SELECT * FROM Poster");
-        
+
         while (rs.next()) {
             String curName = rs.getString("PosterName");
             int rep = rs.getInt(2);
             int numPages = rs.getInt(3);
             arr.add(new Poster(curName, rep, numPages, null));
-            
+
         }
         return arr;
     }
-    
+
     /*
      * This method gets a specific user's:
      * List of all Pages belong to them (Array with pages as each element)
@@ -147,7 +147,7 @@ public class JDBCConnection {
         Statement stmt = this.connection.createStatement();
         ResultSet topicsRS = stmt.executeQuery("SELECT TopicName FROM PAGE WHERE PAGE.POSTERNAME = '" +
                                                userName + "'");
-        
+
         // Get all the pages
         while (topicsRS.next()) {
             String topic = topicsRS.getString(1);
@@ -155,11 +155,11 @@ public class JDBCConnection {
             arr.get(0).add(p);
         }
         System.out.println("got the pages");
-        
+
         // Now get all threads
         ResultSet threadsRS = stmt.executeQuery("SELECT * FROM Thread " +
                                                 "WHERE Thread.PosterName = '" + userName + "'");
-        
+
         while (threadsRS.next()) {
             int id = threadsRS.getInt(1);
             String title = threadsRS.getString("Title");
@@ -174,16 +174,16 @@ public class JDBCConnection {
                 isLocked = true;
             }
             String topicName = threadsRS.getString(7);
-            
+
             Thread t = new Thread(id, title, text, time, voteNum, isLocked, topicName, userName);
             arr.get(1).add(t);
         }
         System.out.println("got the threads");
-        
+
         // Now get all comments belonging
         ResultSet commentsRS = stmt.executeQuery("SELECT * FROM UserComment " +
                                                  "WHERE Usercomment.PosterName = '" + userName + "'");
-        
+
         while (commentsRS.next()) {
             int id = commentsRS.getInt(1);
             String text = commentsRS.getString("Text");
@@ -191,21 +191,21 @@ public class JDBCConnection {
             Time time = commentsRS.getTime(4);
             String poster = commentsRS.getString(5);
             String ThreadID = commentsRS.getString(6);
-            
+
             Comment c = new Comment(id, text, voteNum, time, poster, ThreadID);
             arr.get(2).add(c);
-            
+
         }
-        
+
         return arr;
     }
-    
+
     /*
      * Returns an array of Threads for a given Page
      */
     public ArrayList<Thread> getPageThreads(String pageTopic) throws SQLException {
         ArrayList<Thread> arr = new ArrayList<Thread>();
-        
+
         Statement stmnt = this.connection.createStatement();
         ResultSet rs = stmnt.executeQuery("SELECT * FROM Thread " +
                                           "WHERE Thread.TopicName = '" + pageTopic + "'");
@@ -224,42 +224,42 @@ public class JDBCConnection {
             }
             String topicName = rs.getString(7);
             String posterName = rs.getString(8);
-            
+
             Thread t = new Thread(id, title, text, time, voteNum, isLocked, topicName, posterName);
             arr.add(t);
-            
+
         }
-        
+
         return arr;
-        
+
     }
-    
+
     /*
      * Returns a list of all pages
      */
     public ArrayList<Page> getAllPages() throws SQLException {
         ArrayList<Page> arr = new ArrayList<Page>();
-        
+
         Statement stmnt = this.connection.createStatement();
         ResultSet rs = stmnt.executeQuery("SELECT * FROM Page");
-        
+
         while (rs.next()) {
             String topicName = rs.getString("TopicName");
             String posterName = rs.getString("PosterName");
-            
+
             Page p = new Page(topicName, posterName);
             arr.add(p);
         }
         return arr;
     }
-    
+
     /*
      * Returns a list of comment maps
      * TODO
      */
     public ArrayList<Comment> getThreadComments(String ThreadID) throws SQLException {
         ArrayList<Comment> arr = new ArrayList<Comment>();
-        
+
         Statement stmnt = this.connection.createStatement();
         ResultSet rs = stmnt.executeQuery("SELECT * FROM UserComment " +
                                           "WHERE UserComment.ThreadID = '" + ThreadID + "'");
@@ -269,20 +269,20 @@ public class JDBCConnection {
             int voteNum = rs.getInt(3);
             Time time = rs.getTime(4);
             String poster = rs.getString(5);
-            
+
             Comment c = new Comment(id, text, voteNum, time, poster, ThreadID);
             arr.add(c);
         }
-        
+
         return arr;
     }
-    
-    
+
+
     /*
      * -----------------------------------------------------------------------------------------
      * All the following are INSERT funtions, rather than SELECT Queries. USER BEWARE
      */
-    
+
     /*
      * Create a poster with option for admin
      */
@@ -313,7 +313,7 @@ public class JDBCConnection {
             assert newUser == 0;
         }
     }
-    
+
     /*
      * Create a page
      * @param: posterName should be found and passed in via query result
@@ -341,7 +341,7 @@ public class JDBCConnection {
             assert newUser == 0;
         }
     }
-    
+
     /*
      * Create a thread
      * @param: topicName and posterName should be found and passed in via query result
@@ -355,7 +355,7 @@ public class JDBCConnection {
         int newThread = stmnt.executeUpdate("INSERT INTO Thread VALUES (id_seq.NEXTVAL, '" + threadTitle + "', '"+text+"', current_timestamp, 1, 0, '"+topicName+"', '"+posterName+"')");
         assert newThread == 0;
     }
-    
+
     /*
      * Create a comment
      * @param: posterName and threadID should be found and passed in via query result
@@ -372,7 +372,7 @@ public class JDBCConnection {
         int newComment = stmnt.executeUpdate("INSERT INTO UserComment VALUES (id_seq.NEXTVAL, '"+text+"', 1, current_timestamp, '"+posterName+"', "+threadID+")");
         assert newComment == 0;
     }
-    
+
     /*
      * Update the comment voted on
      * @param: posterName, commID should be found and passed in via query result
@@ -387,7 +387,7 @@ public class JDBCConnection {
         int updatedComment = stmnt.executeUpdate("UPDATE UserComment SET voteNum = voteNum + "+vote+" WHERE PosterName = '"+posterName+"' AND CommID = '"+commID+"'");
         assert updatedComment == 0;
     }
-    
+
     /*
      * Update the thread voted on
      * @param: posterName, threadID should be found and passed in via query result
@@ -402,7 +402,7 @@ public class JDBCConnection {
         int updatedThread = stmnt.executeUpdate("UPDATE Thread SET voteNum = voteNum + "+vote+" WHERE PosterName = '"+posterName+"' AND ThreadID = '"+threadID+"'");
         assert updatedThread == 0;
     }
-    
+
     /*
      * Create a vote, either a comment or thread vote
      * @param: isComment is a boolean set to true by default, as this is the most common vote type
@@ -429,7 +429,7 @@ public class JDBCConnection {
             updateThreadOnVote(posterName, isUpvote, id);
         }
     }
-    
+
     /*
      * Create a suggestion for a page
      * @param: posterName, topicName should be found and passed in via query result
@@ -443,12 +443,12 @@ public class JDBCConnection {
         int suggestion = stmnt.executeUpdate("INSERT INTO Suggestion VALUES (id_seq.NEXTVAL, '"+text+"', '"+posterName+"', '"+topicName+"')");
         assert suggestion == 0;
     }
-    
+
     /*
      * -----------------------------------------------------------------------------------------
      * Other update methods and administrative functions
      */
-    
+
     /*
      * Promote a poster to admin
      * @throws: SQLException thrown if AdminID is not NULL by db
@@ -458,7 +458,7 @@ public class JDBCConnection {
         int promote = stmnt.executeUpdate("UPDATE Poster SET AdminID = admin_seq.NEXTVAL WHERE PosterName = '"+posterName+"' AND AdminID IS NULL");
         assert promote == 0;
     }
-    
+
     public void adminLockThread(int threadID, String posterName) throws SQLException {
         Statement stmnt = this.connection.createStatement();
         ResultSet rs = stmnt.executeQuery("SELECT adminID FROM Poster " +
@@ -470,13 +470,13 @@ public class JDBCConnection {
         if (x) {
             throw new SQLException("This user is not an admin.");
         }
-        
+
         int promote = stmnt.executeUpdate("UPDATE Thread SET isLockedFlag = 1");
         assert promote == 0;
     }
-    
+
     // ADDITIONAL PROJECT DEMO METHODS, SPECIFIED ON TRELLO (PROJ, DELETE, ETC)
-    
+
     // op is one of {"reputation", "numberofpages"}
     // takes the op and gives the names of all users above <arg> with that value
     public ArrayList<String> selectUsersAboveX(String op, int arg) throws SQLException {
@@ -491,11 +491,11 @@ public class JDBCConnection {
                 names.add(pname);
             }
         }
-        
+
         return names;
-        
+
     }
-    
+
     public ArrayList<String> selectAdminIDAboveX(String op, int arg) throws SQLException {
         ArrayList<String> ids = new ArrayList<String>();
         Statement stmnt = this.connection.createStatement();
@@ -509,12 +509,12 @@ public class JDBCConnection {
             }
         }
         return ids;
-        
+
     }
-    
+
     public ArrayList<String> suggestionsFromAdmins() throws SQLException {
         ArrayList<String> sugIDs = new ArrayList<String>();
-        
+
         Statement stmnt = this.connection.createStatement();
         ResultSet rs = stmnt.executeQuery("SELECT sugID FROM Poster P, Suggestion S " +
                                           "WHERE P.adminID is not null AND P.postername = S.postername");
@@ -524,12 +524,12 @@ public class JDBCConnection {
         }
         return sugIDs;
     }
-    
+
     public ArrayList<String> usersInAllThreads() throws SQLException {
         ArrayList<String> posternames = new ArrayList<String>();
-        
+
         Statement stmnt = this.connection.createStatement();
-        ResultSet rs = stmnt.executeQuery("SELECT postername FROM poster p WHERE NOT EXISTS ((SELECT t.threadID FROM thread t) MINUS " + 
+        ResultSet rs = stmnt.executeQuery("SELECT postername FROM poster p WHERE NOT EXISTS ((SELECT t.threadID FROM thread t) MINUS " +
                                           "(SELECT c.threadid FROM usercomment c, thread t WHERE p.postername = c.postername AND " +
                                           "c.threadid = t.threadid) )");
         while (rs.next()) {
@@ -537,17 +537,17 @@ public class JDBCConnection {
             posternames.add(id);
         }
         return posternames;
-        
+
     }
-    
-    
+
+
     // Op is one of : {" < " or " > "}
     // if <, gives the min
     // if > gives the max
     public Thread minOrMaxThread(String op) throws SQLException {
         Statement stmnt = this.connection.createStatement();
         ResultSet rs = stmnt.executeQuery("select * from thread t where t.votenum " + op + "= (select max(t1.votenum) from thread t1)");
-        
+
         Thread t = null;
         while (rs.next()) {
             int threadID= rs.getInt(1);
@@ -567,26 +567,26 @@ public class JDBCConnection {
             t = new Thread(threadID, title, text, time, voteNum, isLocked, topicName, posterName);
         }
         return t;
-        
+
     }
-    
+
     // get the min comment score op="min"
     // the max comment score op="max"
     // the avg comment score op="avg"
     // the count of comments op ="count"
-    
+
     public HashMap<String, Integer> CommentInfo(String op) throws SQLException {
         HashMap<String, Integer> threadVoteMap = new HashMap<String, Integer>();
         Statement stmnt = this.connection.createStatement();
         ResultSet rs = stmnt.executeQuery("SELECT + c.threadid, " + op + "(c.voteNum) FROM UserComment c, Thread t GROUP BY c.threadID HAVING c.threadID = t.threadID");
-        
+
         while (rs.next()) {
             String threadid = rs.getString(1);
             Integer votenum = rs.getInt(2);
             threadVoteMap.put(threadid, votenum);
         }
-        
+
         return threadVoteMap;
     }
-    
+
 }

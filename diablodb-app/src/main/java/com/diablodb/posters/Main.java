@@ -11,10 +11,7 @@ import org.apache.catalina.webresources.DirResourceSet;
 import org.apache.catalina.webresources.StandardRoot;
 
 public class Main {
-	
-//	public static final Optional<String> PORT = Optional.ofNullable(System.getenv("PORT"));
-//	public static final Optional<String> HOSTNAME = Optional.ofNullable(System.getenv("HOSTNAME"));
-	
+
 	public static void main(String[] args) throws ServletException, LifecycleException, IOException {
         String webappDirLocation = "src/main/webapp/";
         Tomcat tomcat = new Tomcat();
@@ -29,7 +26,7 @@ public class Main {
         tomcat.setPort(Integer.valueOf(webPort));
 
         StandardContext ctx = (StandardContext) tomcat.addWebapp("/", new File(webappDirLocation).getAbsolutePath());
-        System.out.println("configuring app with basedir: " + new File("./" + webappDirLocation).getAbsolutePath());
+        System.out.println("configuring app with basedir: " + new File(webappDirLocation).getAbsolutePath());
 
         // Declare an alternative location for your "WEB-INF/classes" dir
         // Servlet 3.0 annotation will work

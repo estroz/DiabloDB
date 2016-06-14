@@ -105,13 +105,13 @@ public class JDBCConnection {
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 			System.out.println("Driver registered");
 			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1522:ug",
-				"haha", "lol");
+				"ora_b9e8", "a53862108");
 			this.connection = con;
 		} catch (SQLException e) {
-			System.out.println("Couldn't conenct to the database, are you tunneled?");
+			e.printStackTrace();
+			System.out.println("Couldn't connect to the database, are you tunneled?");
 		}
-		System.out.println("Conencted to db");
-
+		System.out.println("Connected to DiabloDB");
 	}
 
 	/*
@@ -132,7 +132,7 @@ public class JDBCConnection {
 		}
 		return arr;
 	}
-	
+
 	/*
 	 * Returns all comments a user has made.
 	 */
@@ -145,7 +145,7 @@ public class JDBCConnection {
 		}
 		return comments;
 	}
-	
+
 	/*
 	 * Returns all threads a user has made.
 	 */
@@ -158,7 +158,7 @@ public class JDBCConnection {
 		}
 		return threads;
 	}
-	
+
 	/*
 	 * Returns all pages a user has made.
 	 */
@@ -287,6 +287,7 @@ public class JDBCConnection {
 			String posterName = rs.getString("PosterName");
 			arr.add(new Page(topicName, posterName));
 		}
+		System.out.println("All pages returned from db.");
 		return arr;
 	}
 
@@ -339,13 +340,13 @@ public class JDBCConnection {
 			}
 			i++;
 		}
-		if (i == numberOfPosters-1) {
+		if (i == numberOfPosters) {
 			int newUser;
 			if (!isAdmin) {
-				newUser = stmnt.executeUpdate("INSERT INTO Poster VALUES ('"+userName+"', 0, 0, null");
+				newUser = stmnt.executeUpdate("INSERT INTO Poster VALUES ('"+userName+"', 0, 0, null)");
 			}
 			else {
-				newUser = stmnt.executeUpdate("INSERT INTO Poster VALUES ('"+userName+"', 0, 0, admin_seq.NEXTVAL");
+				newUser = stmnt.executeUpdate("INSERT INTO Poster VALUES ('"+userName+"', 0, 0, admin_seq.NEXTVAL)");
 			}
 			assert newUser == 0;
 		}

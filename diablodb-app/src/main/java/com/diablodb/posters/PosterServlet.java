@@ -28,7 +28,9 @@ public class PosterServlet extends HttpServlet {
 	// This processes GET requests, ex. get all threads in db (GET from servlet)
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		String action = req.getParameter("action");
+		System.out.println("doGet method triggered.");
 		if (action != null){
+			System.out.println("Action not null.");
 			switch (action) {
 			// Gets
 			case "getAllPages":
@@ -56,6 +58,10 @@ public class PosterServlet extends HttpServlet {
 				getUserComments(req, res);
 				break;
 			}
+		}
+		else {
+			System.out.println("Action was null.");
+			getAllPages(req, res);
 		}
 	}
 	
@@ -172,14 +178,17 @@ public class PosterServlet extends HttpServlet {
 		ArrayList<Page> pages = null;
 		try {
 			pages = jdbcc.getAllPages();
+			for (Page p : pages) {
+				System.out.print("Topic name: "+p.topicName+"\n");
+			}
+			req.setAttribute("pages", pages);
+			String nextJsp = "/jsp/index.jsp";
+			RequestDispatcher d = getServletContext().getRequestDispatcher(nextJsp);
+			d.forward(req, res);
 		} catch (SQLException e) {
 			Logger.getLogger(PosterServlet.class.getName()).log(Level.SEVERE, null, e);
 		}
-		
-		req.setAttribute("pages", pages);
-		String nextJsp = "/jsp/list-pages.jsp";
-		RequestDispatcher d = getServletContext().getRequestDispatcher(nextJsp);
-		d.forward(req, res);
+		System.out.println("Got all pages.");
 	}
 
 	@Override
