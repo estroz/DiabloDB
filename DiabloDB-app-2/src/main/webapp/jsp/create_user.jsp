@@ -8,11 +8,12 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="">
     <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
 
-    <title>DiabloDB: the forum for something</title>
+    <title>DiabloDB: the forum for nothing</title>
 
     <!-- Custom styles for this template -->
-    <link href="../css/index.css" rel="stylesheet">
+    <link href="../css/create_page.css" rel="stylesheet">
 
   </head>
 
@@ -28,7 +29,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/poster">DiabloDB <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></a>
+          <a class="navbar-brand" href="/poster">DiabloDB <span class="glyphicon glyphicon-fire" aria-hidden="true"></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
@@ -40,54 +41,29 @@
 
     <div class="container theme-showcase" role="main">
 
-      <div class="jumbotron">
-        <h1>DiabloDB <span class="glyphicon glyphicon-fire" aria-hidden="true"></h1>
-        <p>Your cloud based solution for machine intelligence content and delivery network.</p>
-      </div>
+        <!-- JSP -->
+        <form action="/poster" method="post"  role="form" data-toggle="validator" >
+          <input type="hidden" id="action" name="action" value="createUser">
+          <h2>Create User</h2>
+          <c:choose>
+            <c:when test="${not empty message}">
+                <div class="alert alert-info"> ${message} </div>
+            </c:when>
+            <c:otherwise>
+              <fieldset class="form-group">
+                <label class="control-label col-xs-4">User name:</label>
+                <input type="text" name="userName" id="userName" class="form-control" value="${poster.userName}" required="true"/>
+              </fieldset>
+              <fieldset class="form-group">
+                <label class="control-label col-xs-4">Admin password (only admins can create users):</label>
+                <input type="password" name="adminPass" id="adminPass" class="form-control" value="${adminPass}" required="true"/>
+              </fieldset>
+              <br></br>
+              <button type="submit" class="btn btn-primary  btn-md">Create</button>
+            </c:otherwise>   
+          </c:choose>                                               
+        </form>
 
-      <div class="sidebar">
-        <a href="jsp/create_page.jsp"><button class="btn btn-primary">Create Page</button></a>
-        <a href="jsp/create_user.jsp"><button class="btn btn-primary">Create User</button></a>
-      </div>
-
-      <div class="row">
-        <div class="col-md-12">
-
-          <!-- ADDED FOR JSP STUFF -->
-          <form action="/poster" method="get" id="pageForm" role="form" >              
-            <c:choose>
-              <c:when test="${not empty pages}">
-                <table  class="table table-striped">
-                  <thead>
-                      <tr>
-                          <th>Status</th>
-                          <th>Page</th>
-                          <th>Created by</th>
-                      </tr>
-                  </thead>
-                  <c:forEach var="page" items="${pages}">
-                      <tr>
-                          <td><span class="label label-default">Neutral</span></td>
-                          <td>                          
-                            <a href="/poster?action=getPageThreads&topicName=${page.topicName}">${page.topicName}</a>
-                          </td>
-                          <td>${page.posterName}</td>
-                      </tr>
-                  </c:forEach>
-                </table>
-               </c:when>                    
-                  <c:otherwise>
-                      <br>           
-                      <div class="alert alert-info">
-                          No pages.
-                      </div>
-                  </c:otherwise>
-            </c:choose>
-          </form>
-          <!-- ADDED FOR JSP STUFF -->
-
-        </div>
-      </div>
     </div> <!-- /container -->
 
 

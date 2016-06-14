@@ -134,6 +134,7 @@ public class PosterServlet extends HttpServlet {
 		}
 		
 		req.setAttribute("threads", threads);
+        req.setAttribute("topic", topicName);
 		String nextJsp = "/jsp/page.jsp";
 		RequestDispatcher d = getServletContext().getRequestDispatcher(nextJsp);
 		d.forward(req, res);
@@ -268,20 +269,22 @@ public class PosterServlet extends HttpServlet {
 	}
 
 	private void createThread(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		// String threadTitle = req.getParameter("posterName");
-		// String text = req.getParameter("text");
-		// String topicName = req.getParameter("topicName");
-		// String posterName = req.getParameter("posterName");
-		// try {
-		// 	jdbcc.createThread(threadTitle, text, topicName, posterName);
-		// } catch (SQLException e) {
-		// 	Logger.getLogger(PosterServlet.class.getName()).log(Level.SEVERE, null, e);
-		// }
-		// String message = threadTitle + " has been created in " + topicName + ".";
-		// req.setAttribute("message", message);
-		// String nextJsp = "/jsp/thread.jsp";
-		// RequestDispatcher d = getServletContext().getRequestDispatcher(nextJsp);
-		// d.forward(req, res);
+		 String threadTitle = req.getParameter("posterName");
+		 String text = req.getParameter("text");
+		 String topicName = req.getParameter("topicName");
+		 String posterName = req.getParameter("posterName");
+		 try {
+		 	jdbcc.createThread(threadTitle, text, topicName, posterName);
+		 } catch (SQLException e) {
+		 	Logger.getLogger(PosterServlet.class.getName()).log(Level.SEVERE, null, e);
+		 }
+		 String message = threadTitle + " has been created in " + topicName + ".";
+		 req.setAttribute("message", message);
+         req.setAttribute("topicName", topicName);
+//		 String nextJsp = "/jsp/thread.jsp";
+//		 RequestDispatcher d = getServletContext().getRequestDispatcher(nextJsp);
+//		 d.forward(req, res);
+         getPageThreads(req, res);
 	}
 
 	private void createPage(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -296,24 +299,29 @@ public class PosterServlet extends HttpServlet {
 		}
 		String message = topicName + " has been created.";
 		req.setAttribute("message", message);
-		// String nextJsp = "/jsp/index.jsp";
-		// RequestDispatcher d = getServletContext().getRequestDispatcher(nextJsp);
-		// d.forward(req, res);
 		getAllPages(req, res);
 	}
 
 	private void createUser(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		// String userName = req.getParameter("userName");
-		// try {
-		// 	jdbcc.createUser(userName, false);
-		// } catch (SQLException e) {
-		// 	Logger.getLogger(PosterServlet.class.getName()).log(Level.SEVERE, null, e);
-		// }
-		// String message = "Welcome to DiabloDB, " + userName;
-		// req.setAttribute("message", message);
-		// String nextJsp = "/jsp/user.jsp";
-		// RequestDispatcher d = getServletContext().getRequestDispatcher(nextJsp);
-		// d.forward(req, res);
+		 String userName = req.getParameter("userName");
+         String adminPass = req.getParameter("adminPass");
+         String message;
+         if(adminPass.equals("admin")) {
+             try {
+                 jdbcc.createUser(userName, false);
+                 message = "Welcome to DiabloDB, " + userName;
+             } catch (SQLException e) {
+                 message = "User not created.";
+                 Logger.getLogger(PosterServlet.class.getName()).log(Level.SEVERE, null, e);
+             }
+         } else {
+             message = "Invalid admin password";
+         }
+    
+		 req.setAttribute("message", message);
+		 String nextJsp = "/jsp/create_user.jsp";
+		 RequestDispatcher d = getServletContext().getRequestDispatcher(nextJsp);
+		 d.forward(req, res);
 	}
 
 	@Override

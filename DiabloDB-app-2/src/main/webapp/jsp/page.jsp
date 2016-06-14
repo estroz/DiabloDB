@@ -27,7 +27,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="index.html">DiabloDB <span class="glyphicon glyphicon-fire" aria-hidden="true"></a>
+          <a class="navbar-brand" href="/poster">DiabloDB <span class="glyphicon glyphicon-fire" aria-hidden="true"></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
@@ -44,7 +44,7 @@
       </div>
 
       <div class="sidebar">
-        <a href="create_thread.html"><button class="btn btn-primary">Create thread</button></a>
+        <a href="jsp/create_thread.jsp?topic=${topic}"><button class="btn btn-primary">Create Thread</button></a>
       </div>
 
       <div class="row">
@@ -55,6 +55,7 @@
           <form action="/poster" method="get" id="threadForm" role="form" >              
             <c:choose>
               <c:when test="${not empty threads}">
+                <h2>${topic}</h2>
                 <table  class="table table-striped">
                   <thead>
                       <tr>
@@ -67,7 +68,7 @@
                       <tr>
                           <td>${thread.voteNum}</td>
                           <td>
-                            <a href="/poster?action=getThreadComments&threadID=${thread.threadID}">${thread.topicName}</a>
+                            <a href="/poster?action=getThreadComments&threadID=${thread.threadID}">${thread.title}</a>
                           </td>
                           <td>${thread.posterName}</td>
                       </tr>

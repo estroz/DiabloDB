@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -27,7 +28,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="jsp/index.jsp">DiabloDB <span class="glyphicon glyphicon-fire" aria-hidden="true"></a>
+          <a class="navbar-brand" href="/poster">DiabloDB <span class="glyphicon glyphicon-fire" aria-hidden="true"></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
@@ -59,13 +60,13 @@
                           <th>Admin?</th>
                       </tr>
                   </thead>
-                  <c:forEach var="user" items="${users}">
+                  <c:forEach var="poster" items="${users}">
                       <tr>
-                          <td>${user.userName}</td>
-                          <td>${user.reputation}</td>
-                          <td>${user.numberOfPages}</td>
+                          <td>${poster.userName}</td>
+                          <td>${poster.reputation}</td>
+                          <td>${poster.numberOfPages}</td>
                           <c:choose>
-                            <c:when test="${user.adminID != null}">
+                            <c:when test="${poster.adminID != null}">
                                 <td>Yes</td>
                             </c:when>    
                             <c:otherwise>

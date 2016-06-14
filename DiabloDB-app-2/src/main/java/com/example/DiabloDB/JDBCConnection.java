@@ -125,7 +125,6 @@ public class JDBCConnection {
 
         while (rs.next()) {
             String curName = rs.getString("PosterName");
-            System.out.println(curName);
             int rep = rs.getInt(2);
             int numPages = rs.getInt(3);
             arr.add(new Poster(curName, rep, numPages, null));
@@ -300,13 +299,15 @@ public class JDBCConnection {
             if (currentPosters.get(i).getUserName().equals(userName)) {
                 // TODO: send notice to GUI and disallow name creation
                 System.err.println("Username already taken. Please choose another.");
+                // TODO: should throw a different exception
+                throw new SQLException();
             }
             i++;
         }
-        if (i == numberOfPosters-1) {
+        if (i == numberOfPosters) {
             int newUser;
             if (!isAdmin) {
-                newUser = stmnt.executeUpdate("INSERT INTO Poster VALUES ('"+userName+"', 0, 0, null");
+                newUser = stmnt.executeUpdate("INSERT INTO Poster VALUES ('"+userName+"', 0, 0, null)");
             }
             else {
                 newUser = stmnt.executeUpdate("INSERT INTO Poster VALUES ('"+userName+"', 0, 0, admin_seq.NEXTVAL");

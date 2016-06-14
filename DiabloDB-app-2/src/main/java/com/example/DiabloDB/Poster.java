@@ -66,5 +66,9 @@ public class Poster {
 	public int getNumberOfPages() {
 		return this.numberOfPages;
 	}
+    
+    public Integer getAdminID() {
+        return this.adminID;
+    }
 
 }
