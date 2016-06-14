@@ -1,0 +1,7 @@
+com/diablodb/posters/Thread.class
+com/diablodb/posters/Poster.class
+com/diablodb/posters/Comment.class
+com/diablodb/posters/Main.class
+com/diablodb/posters/PosterServlet.class
+com/diablodb/posters/Page.class
+com/diablodb/posters/JDBCConnection.class

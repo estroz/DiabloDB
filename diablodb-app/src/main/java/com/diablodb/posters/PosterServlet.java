@@ -18,6 +18,10 @@ import javax.servlet.http.HttpServletResponse;
 		urlPatterns = {"/poster"})
 
 public class PosterServlet extends HttpServlet {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	JDBCConnection jdbcc = new JDBCConnection();
 	
 	@Override
@@ -167,7 +171,7 @@ public class PosterServlet extends HttpServlet {
 	private void getAllPages(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		ArrayList<Page> pages = null;
 		try {
-			pages = jdbcc.getAllPagesAndCreators();
+			pages = jdbcc.getAllPages();
 		} catch (SQLException e) {
 			Logger.getLogger(PosterServlet.class.getName()).log(Level.SEVERE, null, e);
 		}

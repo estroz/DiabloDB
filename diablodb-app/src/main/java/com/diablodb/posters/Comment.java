@@ -23,4 +23,28 @@ public class Comment {
 		return "CommentObject; id: " + Integer.toString(this.commID);
 	}
 
+	public int getCommID() {
+		return this.commID;
+	}
+
+	public int getVoteNum() {
+		return this.voteNum;
+	}
+
+	public String getText() {
+		return this.text;
+	}
+
+	public String getPoster() {
+		return this.poster;
+	}
+
+	public String getThreadID() {
+		return this.threadID;
+	}
+
+	public String getTime() {
+		return this.time.toString();
+	}
+
 }

@@ -1,7 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -57,12 +56,8 @@
         </div><!--/.nav-collapse -->
       </div>
     </nav>
-<jsp:forward page="/poster">
-    <jsp:include page="list-pages.jsp" />
-  </jsp:include>
-</jsp:forward>
 
-    <!-- <div class="container theme-showcase" role="main">
+    <div class="container theme-showcase" role="main">
 
       <div class="jumbotron">
         <h1>DiabloDB <span class="glyphicon glyphicon-fire" aria-hidden="true"></h1>
@@ -76,48 +71,43 @@
 
       <div class="row">
         <div class="col-md-12">
+          <c:choose>
+            <c:when test="${not empty pages}">
           <table class="table table-striped">
             <thead>
               <tr>
                 <th>Status</th>
                 <th>Page</th>
-                <th>Thread Name</th>
+                <%-- <th>Thread Name</th> --%>
                 <th>Poster</th>
               </tr>
             </thead>
             <tbody>
+              <c:forEach var="page" items="${pages}">
+                <%-- <c:set var="p" value="${page}"> --%>
               <tr>
                 <td><span class="label label-success">Rising</span></td>
-                <td><a href="page.html">UrPage1</a></td>
-                <td><a href="page.html">What stuff do you have in your closet?</a></td>
-                <td><a href="">Brett</td></a>
+                <td><a href="page.html">${page.topicName}</a></td>
+                <%-- <td><a href="page.html"><%=p %></a></td> --%>
+                <td><a href="user.html">${page.posterName}</td></a>
+              <%-- </c:set> --%>
               </tr>
-              <tr>
-                <td><span class="label label-default">Neutral</span></td>
-                <td><a href="page.html">UrPage2</td></a>
-                <td><a href="page.html">Backhoes and fronthoes: the great debate</t></a>
-                <td><a href="">Josh</td></a>
-              </tr>
-              <tr>
-                <td><span class="label label-danger">Falling</span></td>
-                <td><a href="page.html">UrPage3</a></td>
-                <td><a href="page.html">Belligerence in the courtroom is a felony</a></td>
-                <td><a href="">Sam</td></a>
-              </tr>
-              <tr>
-                <td><span class="label label-success">Rising</span></td>
-                <td><a href="page.html">UrPage4</a></td>
-                <td><a href="page.html">2001: The Based God oddesy</a></td>
-                <td><a href="">Eric</td></a>
-              </tr>
-
+            </c:forEach>
             </tbody>
           </table>
+        </c:when>
+        <c:otherwise>
+          <br>
+            <div class="alert alert-info">
+              No pages exist currently.
+            </div>
+          </c:otherwise>
+        </c:choose>
         </div>
       </div>
 
 
-    </div> --> <!-- /container --> <!--
+    </div> <!-- /container -->
 <div class="container">
     <nav>
   <ul class="pagination">
@@ -138,7 +128,8 @@
     </li>
   </ul>
 </nav>
-</div> -->
+</div>
+
 
 
     <!-- Bootstrap core JavaScript

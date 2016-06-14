@@ -274,25 +274,9 @@ public class JDBCConnection {
 	}
 
 	/*
-	 * Returns a list of all pages
-	 */
-	public ArrayList<String> getAllPages() throws SQLException {
-		ArrayList<String> arr = new ArrayList<String>();
-
-		Statement stmnt = this.connection.createStatement();
-		ResultSet rs = stmnt.executeQuery("SELECT * FROM Page");
-
-		while (rs.next()) {
-			String topicName = rs.getString("TopicName");
-			arr.add(topicName);
-		}
-		return arr;
-	}
-
-	/*
 	 * Returns a all pages and their creators
 	 */
-	public ArrayList<Page> getAllPagesAndCreators() throws SQLException {
+	public ArrayList<Page> getAllPages() throws SQLException {
 		ArrayList<Page> arr = new ArrayList<Page>();
 
 		Statement stmnt = this.connection.createStatement();
@@ -376,13 +360,13 @@ public class JDBCConnection {
 		assert topicName != null;
 		assert posterName != null;
 		Statement stmnt = this.connection.createStatement();
-		ArrayList<String> allPages = getAllPages();
+		ArrayList<Page> allPages = getAllPages();
 		int i = 0;
 		// Implement the uniqueness check in main()?
 		int numberOfPages = allPages.size();
 		while (i < numberOfPages){
 			// Check if topicname was already taken
-			if (allPages.get(i).equals(topicName)) {
+			if (allPages.get(i).getTopicName().equals(topicName)) {
 				// TODO: send notice to GUI and disallow page creation
 				System.err.println("Topic name already exists for a page. Please choose another topic or use this page to post threads.");
 			}
