@@ -1,0 +1,30 @@
+1) proj and sel
+query posters -> query posters
+all threads -> query comments of threads
+
+2) join
+all threads -> threadID and titles (joins the two tables)
+
+3) Division
+all users -> get posters in all threads
+
+4) aggre
+all threads -> query threads -> most/least popular
+
+5) nested aggre with group by
+all threads -> query comments of threads (groups by max/min, etc.)
+
+6) deletion
+all users -> delete poster (show that pages, threads, coments by them are jsut null)
+show all comments -> delte a thread -> all comments
+
+7) update
+page -> thread -> comments section
+downvote it, downvote again to show it wot let you, then change vote to upvote
+
+8) gui
+type checking for all fields (inherit boostrap element)
+
+9)
+1. we used bootstrap with error handling
+FIRE EMOJI
