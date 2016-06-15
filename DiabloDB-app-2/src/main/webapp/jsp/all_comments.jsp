@@ -70,7 +70,16 @@
                           <td>${comment.text}</td>
                           <td>${comment.voteNum}</td>
                           <td>${comment.time}</td>
-                          <td>${comment.poster}</td>
+                          <td>
+                            <c:choose>
+                              <c:when test="${comment.poster != null}">
+                                ${comment.poster}
+                              </c:when>    
+                              <c:otherwise>
+                                [deleted]
+                              </c:otherwise>
+                            </c:choose>
+                          </td>
                           <td>
                             <!-- DELETE OPTION -->
                             <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#deleteComment${comment.commID}">Delete</button>

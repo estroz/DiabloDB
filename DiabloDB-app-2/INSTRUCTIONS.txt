@@ -1,0 +1,11 @@
+INSTRUCTIONS TO LAUNCH
+----------------------
+1. Install Maven on machine
+2. Install classes12.jar per instructions at http://www.springfuse.com/install-oracle-jdbc-driver-in-maven-repository.html
+3. Go into src -> main -> java -> JDBCConnection.java and update "user" and "name" in constructor to connect to Oracle
+4. In directory with src and pom.xml run the following:
+		mvn clean compile
+		mvn package
+5. Navigate to the newly created target folder
+6. java -jar DiabloDB-app-1.0-SNAPSHOT-jar-with-dependencies.jar
+7. Go to http://localhost:8081/ in browser 

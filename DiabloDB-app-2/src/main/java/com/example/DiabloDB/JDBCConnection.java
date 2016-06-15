@@ -222,7 +222,7 @@ public class JDBCConnection {
 	}
 
 	/*
-	 * Returns a list of comment maps TODO
+	 * Returns a list of comments in a thread
 	 */
 	public ArrayList<Comment> getThreadComments(String ThreadID) throws SQLException {
 		ArrayList<Comment> arr = new ArrayList<Comment>();
@@ -402,8 +402,15 @@ public class JDBCConnection {
 		int vote = -1;
 		if (isUpvote)
 			vote = 1;
-		int updatedComment = stmnt
+        int updatedComment = 0;
+        try{
+            updatedComment = stmnt
 				.executeUpdate("UPDATE UserComment SET voteNum = voteNum + " + vote + " WHERE CommID = " + commID + "");
+        }
+        // Trying to downvote below -1
+        catch (SQLException e) {
+            stmnt.executeUpdate("DELETE FROM CommentVote WHERE commID = " + commID + " AND PosterName = " +posterName + "");
+        }
 		assert updatedComment == 0;
         updateRepComment(commID);
 	}
@@ -470,49 +477,54 @@ public class JDBCConnection {
 	 * @param: posterName, topicName should be found and passed in via query
 	 * result
 	 */
-	public void createSuggestion(String text, String posterName, String topicName) throws SQLException {
-		// TODO: Implement asserts in main(), should be checked upon insertion
-		// into db, by the db
-		assert text != null;
-		assert posterName != null;
-		assert topicName != null;
-		Statement stmnt = this.connection.createStatement();
-		int suggestion = stmnt.executeUpdate("INSERT INTO Suggestion VALUES (id_seq.NEXTVAL, '" + text + "', '"
-				+ posterName + "', '" + topicName + "')");
-		assert suggestion == 0;
-	}
+//	public void createSuggestion(String text, String posterName, String topicName) throws SQLException {
+//		// TODO: Implement asserts in main(), should be checked upon insertion
+//		// into db, by the db
+//		assert text != null;
+//		assert posterName != null;
+//		assert topicName != null;
+//		Statement stmnt = this.connection.createStatement();
+//		int suggestion = stmnt.executeUpdate("INSERT INTO Suggestion VALUES (id_seq.NEXTVAL, '" + text + "', '"
+//				+ posterName + "', '" + topicName + "')");
+//		assert suggestion == 0;
+//	}
 
+    
+    
 	/*
 	 * -------------------------------------------------------------------------
 	 * ---------------- Other update methods and administrative functions
 	 */
+    
+    
+    
 
 	/*
 	 * Promote a poster to admin
 	 * 
 	 * @throws: SQLException thrown if AdminID is not NULL by db
 	 */
-	public void promotePosterToAdmin(String posterName) throws SQLException {
-		Statement stmnt = this.connection.createStatement();
-		int promote = stmnt.executeUpdate("UPDATE Poster SET AdminID = admin_seq.NEXTVAL WHERE PosterName = '"
-				+ posterName + "' AND AdminID IS NULL");
-		assert promote == 0;
-	}
+//	public void promotePosterToAdmin(String posterName) throws SQLException {
+//		Statement stmnt = this.connection.createStatement();
+//		int promote = stmnt.executeUpdate("UPDATE Poster SET AdminID = admin_seq.NEXTVAL WHERE PosterName = '"
+//				+ posterName + "' AND AdminID IS NULL");
+//		assert promote == 0;
+//	}
 
-	public void adminLockThread(int threadID, String posterName) throws SQLException {
-		Statement stmnt = this.connection.createStatement();
-		ResultSet rs = stmnt.executeQuery("SELECT adminID FROM Poster " + "WHERE postername = '" + posterName + "'");
-		boolean x = true;
-		while (rs.next()) {
-			x = rs.wasNull();
-		}
-		if (x) {
-			throw new SQLException("This user is not an admin.");
-		}
-
-		int promote = stmnt.executeUpdate("UPDATE Thread SET isLockedFlag = 1");
-		assert promote == 0;
-	}
+//	public void adminLockThread(int threadID, String posterName) throws SQLException {
+//		Statement stmnt = this.connection.createStatement();
+//		ResultSet rs = stmnt.executeQuery("SELECT adminID FROM Poster " + "WHERE postername = '" + posterName + "'");
+//		boolean x = true;
+//		while (rs.next()) {
+//			x = rs.wasNull();
+//		}
+//		if (x) {
+//			throw new SQLException("This user is not an admin.");
+//		}
+//
+//		int promote = stmnt.executeUpdate("UPDATE Thread SET isLockedFlag = 1");
+//		assert promote == 0;
+//	}
 
 	// ADDITIONAL PROJECT DEMO METHODS, SPECIFIED ON TRELLO (PROJ, DELETE, ETC)
 
@@ -547,18 +559,18 @@ public class JDBCConnection {
 
 	}
 
-	public ArrayList<String> suggestionsFromAdmins() throws SQLException {
-		ArrayList<String> sugIDs = new ArrayList<String>();
-
-		Statement stmnt = this.connection.createStatement();
-		ResultSet rs = stmnt.executeQuery("SELECT sugID FROM Poster P, Suggestion S "
-				+ "WHERE P.adminID is not null AND P.postername = S.postername");
-		while (rs.next()) {
-			String id = rs.getString(1);
-			sugIDs.add(id);
-		}
-		return sugIDs;
-	}
+//	public ArrayList<String> suggestionsFromAdmins() throws SQLException {
+//		ArrayList<String> sugIDs = new ArrayList<String>();
+//
+//		Statement stmnt = this.connection.createStatement();
+//		ResultSet rs = stmnt.executeQuery("SELECT sugID FROM Poster P, Suggestion S "
+//				+ "WHERE P.adminID is not null AND P.postername = S.postername");
+//		while (rs.next()) {
+//			String id = rs.getString(1);
+//			sugIDs.add(id);
+//		}
+//		return sugIDs;
+//	}
 
 	public ArrayList<Poster> usersInAllThreads() throws SQLException {
 		ArrayList<Poster> posternames = new ArrayList<Poster>();
@@ -620,8 +632,7 @@ public class JDBCConnection {
 		Statement stmnt = this.connection.createStatement();
         ResultSet rs;
         if(idAndTitle.equals("true")) {
-            rs = stmnt.executeQuery("SELECT z.threadID, t2.title, z.voteNum FROM (SELECT c.threadID, " + op
-                                    + "(c.voteNum) as voteNum FROM UserComment c, Thread t GROUP BY c.threadID HAVING c.threadID = t.threadID) z, Thread t2 where t2.threadID = z.threadID");
+            rs = stmnt.executeQuery("SELECT z.threadID, t2.title, z.voteNum FROM (SELECT c.threadID, " + op + "(c.voteNum) as voteNum FROM UserComment c, Thread t GROUP BY c.threadID HAVING c.threadID = t.threadID) z, Thread t2 where t2.threadID = z.threadID");
         } else {
             rs = stmnt.executeQuery("SELECT c.threadid, " + op
 				+ "(c.voteNum) FROM UserComment c, Thread t GROUP BY c.threadID HAVING c.threadID = t.threadID");

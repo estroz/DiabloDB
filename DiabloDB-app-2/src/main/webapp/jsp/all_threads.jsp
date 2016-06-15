@@ -194,7 +194,16 @@
                               <td>${thread.voteNum}</td>
                               <td>${thread.time}</td>>
                               <td>${thread.topicName}</td>
-                              <td>${thread.posterName}</td>
+                              <td>
+                                <c:choose>
+                                  <c:when test="${thread.posterName != null}">
+                                    ${thread.posterName}
+                                  </c:when>    
+                                  <c:otherwise>
+                                    [deleted]
+                                  </c:otherwise>
+                                </c:choose>
+                              </td>
                               <td>
                                 <!-- DELETE OPTION -->
                                 <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#deleteThread${thread.threadID}">Delete</button>

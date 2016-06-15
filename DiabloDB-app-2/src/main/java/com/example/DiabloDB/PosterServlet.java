@@ -31,6 +31,12 @@ public class PosterServlet extends HttpServlet {
             case "deleteComment":
                 deleteComment(req, res);
                 break;
+            case "deleteThread":
+                deleteThread(req, res);
+                break;
+            case "deletePoster":
+                deletePoster(req, res);
+                break;
             case "getQueriedThreadsBasedOnComments":
                 getQueriedThreadsBasedOnComments(req, res);
                 break;
@@ -488,7 +494,7 @@ public class PosterServlet extends HttpServlet {
 		} catch (SQLException e) {
 			Logger.getLogger(PosterServlet.class.getName()).log(Level.SEVERE, null, e);
 			//Added message attribute for SQL Exceptions
-			message = "Unsuccessful vote. Either the poster does not exist or has already voted";
+			message = "Unsuccessful vote. The poster does not exist, they have already voted, or attempting to vote a comment below -1";
 		}
 
 		req.setAttribute("message", message);
