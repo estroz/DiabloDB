@@ -53,81 +53,77 @@
           <!-- ADDED FOR JSP -->
           <!-- List of pages -->
           <form action="/poster" method="get" id="commentForm" role="form" >
-          <c:choose>
-            <c:when test="${not empty message}">
+            <c:if test="${not empty message}">
                 <div class="alert alert-info"> ${message} </div>
-            </c:when>
-            <c:otherwise>              
-              <c:choose>
-                <c:when test="${not empty comments}">
-                  <table  class="table table-striped">
-                    <thead>
-                        <tr>
-                            <td></td>
-                            <td>Votes</td>
-                            <td>Comment</td>
-                            <td>Poster</td>
-                        </tr>
-                    </thead>
-                    <c:forEach var="comment" items="${comments}">
-                        <tr>
-                            <td>
-                              <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal">Vote</button>
-                              <!-- Modal -->
-                              <div class="modal fade" id="myModal" role="dialog">
-                                <div class="modal-dialog">
-                                
-                                  <!-- Modal content-->
-                                  <div class="modal-content">
-                                    <div class="modal-header">
-                                      <h4 class="modal-title">Vote</h4>
-                                    </div>
-                                    <div class="modal-body">
-                                      <!-- JSP -->
-                                      <form action="/poster" method="post"  role="form" data-toggle="validator" >
-                                        <input type="hidden" id="action" name="action" value="createVote">
-                                        <input type="hidden" id="isComment" name="isComment" value="true">
-                                        <input type="hidden" id="id" name="id" value="${comment.commID}">
-                                        <input type="hidden" id="threadID" name="threadID" value="${comment.threadID}">
-                                        <input type="hidden" id="title" name="title" value="<%= request.getParameter("title")%>">
-                                        <fieldset class="form-group">
-                                          <label class="control-label col-xs-4">Poster name:</label>
-                                          <input type="text" name="posterName" id="posterName" class="form-control" required="true"/>
-                                        </fieldset>
-                                        <fieldset>                                   
-                                          <div class="radio">
-                                            <label><input type="radio" name="voteType" value="true">Upvote</label>
-                                          </div>
-                                          <div class="radio">
-                                            <label><input type="radio" name="voteType" value ="false">Downvote</label>
-                                          </div> 
-                                        </fieldset>
-                                          <br></br>
-                                          <button type="submit" class="btn btn-primary  btn-md">Vote</button> 
-                                      </form>
-                                    </div>
+            </c:if>             
+            <c:choose>
+              <c:when test="${not empty comments}">
+                <table  class="table table-striped">
+                  <thead>
+                      <tr>
+                          <td></td>
+                          <td>Votes</td>
+                          <td>Comment</td>
+                          <td>Poster</td>
+                      </tr>
+                  </thead>
+                  <c:forEach var="comment" items="${comments}">
+                      <tr>
+                          <td>
+                            <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal${comment.commID}">Vote</button>
+                            <!-- Modal -->
+                            <div class="modal fade" id="myModal${comment.commID}" role="dialog">
+                              <div class="modal-dialog">
+                              
+                                <!-- Modal content-->
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h4 class="modal-title">Vote</h4>
                                   </div>
-                                  
+                                  <div class="modal-body">
+                                    <!-- JSP -->
+                                    <form action="/poster" method="post"  role="form" data-toggle="validator" >
+                                      <input type="hidden" id="action" name="action" value="createVote">
+                                      <input type="hidden" id="isComment" name="isComment" value="true">
+                                      <input type="hidden" id="id" name="id" value="${comment.commID}">
+                                      <input type="hidden" id="threadID" name="threadID" value="${comment.threadID}">
+                                      <input type="hidden" id="title" name="title" value="<%= request.getParameter("title")%>">
+                                      <fieldset class="form-group">
+                                        <label class="control-label col-xs-4">Poster name:</label>
+                                        <input type="text" name="posterName" id="posterName" class="form-control" required="true"/>
+                                      </fieldset>
+                                      <fieldset>                                   
+                                        <div class="radio">
+                                          <label><input type="radio" name="voteType" value="true">Upvote</label>
+                                        </div>
+                                        <div class="radio">
+                                          <label><input type="radio" name="voteType" value ="false">Downvote</label>
+                                        </div> 
+                                      </fieldset>
+                                        <br></br>
+                                        <button type="submit" class="btn btn-primary  btn-md">Vote</button> 
+                                    </form>
+                                  </div>
                                 </div>
+                                
                               </div>
-                              <!-- /Modal -->
-                            </td>
-                            <td>${comment.voteNum}</td>
-                            <td>${comment.text}</td>
-                            <td>${comment.poster}</td>
-                        </tr>
-                    </c:forEach>
-                  </table>
-                 </c:when>                    
-                    <c:otherwise>
-                        <br>           
-                        <div class="alert alert-info">
-                            No comments.
-                        </div>
-                    </c:otherwise>
-              </c:choose>
-            </c:otherwise> 
-          </c:choose>
+                            </div>
+                            <!-- /Modal -->
+                          </td>
+                          <td>${comment.voteNum}</td>
+                          <td>${comment.text}</td>
+                          <td>${comment.poster}</td>
+                      </tr>
+                  </c:forEach>
+                </table>
+               </c:when>                    
+                  <c:otherwise>
+                      <br>           
+                      <div class="alert alert-info">
+                          No comments.
+                      </div>
+                  </c:otherwise>
+            </c:choose>
           </form>
           <!-- ADDED FOR JSP STUFF -->
 

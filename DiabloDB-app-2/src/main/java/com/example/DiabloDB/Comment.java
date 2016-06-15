@@ -1,4 +1,5 @@
 package com.example.DiabloDB;
+
 import java.sql.Time;
 
 public class Comment {

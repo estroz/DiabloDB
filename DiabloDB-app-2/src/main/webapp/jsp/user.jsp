@@ -40,6 +40,55 @@
 
     <div class="container theme-showcase" role="main">
 
+      <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal">Query Posters</button>
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" role="dialog">
+          <div class="modal-dialog">
+          
+            <!-- Modal content-->
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title">Select users where...</h4>
+              </div>
+              <div class="modal-body">
+                <!-- JSP -->
+                <form action="/poster" method="post"  role="form" data-toggle="validator" >
+                  <input type="hidden" id="action" name="action" value="getQueriedPosters">
+                  <fieldset>                                   
+                    <div class="radio">
+                      <label><input type="radio" name="op" value="reputation">reputation</label>
+                    </div>
+                    <div class="radio">
+                      <label><input type="radio" name="op" value ="numberofpages">number of pages</label>
+                    </div> 
+                  </fieldset>
+                  <fieldset class="form-group">
+                    <label class="control-label col-xs-4">is greater than or equal to:</label>
+                    <input type="number" min="-1000" max="1000" name="arg" id="arg" class="form-control" required="true"/>
+                  </fieldset>
+                  <fieldset>                                   
+                    <div class="radio">
+                      <label><input type="radio" name="adminOnly" value="true">for all users</label>
+                    </div>
+                    <div class="radio">
+                      <label><input type="radio" name="adminOnly" value ="false">for admins</label>
+                    </div> 
+                  </fieldset>
+                    <br></br>
+                    <button type="submit" class="btn btn-primary  btn-md">Submit</button> 
+                </form>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        <!-- /Modal -->
+
+
+
+
+
+
       <div class="page-header">
         <h2>Users</h2>
       </div>
