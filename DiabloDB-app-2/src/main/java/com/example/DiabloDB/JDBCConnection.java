@@ -28,7 +28,7 @@ public class JDBCConnection {
 			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1522:ug", "user", "pass");
 			this.connection = con;
 		} catch (SQLException e) {
-			System.out.println("Couldn't conenct to the database, are you tunneled?");
+			System.out.println("Couldn't connect to the database, are you tunneled?");
 		}
 		System.out.println("Connected to db");
 
@@ -311,8 +311,20 @@ public class JDBCConnection {
 		if (i == numberOfPages) {
 			int newUser = stmnt.executeUpdate("INSERT INTO Page VALUES ('" + topicName + "', '" + posterName + "')");
 			assert newUser == 0;
+            updatePageCount(posterName);
 		}
 	}
+    
+    /*
+     * Update page count
+     *
+     * @param: posterName should be found and passed in via query result
+     */
+    public void updatePageCount(String userName) throws SQLException {
+        Statement stmnt = this.connection.createStatement();
+        int succ = stmnt.executeUpdate("UPDATE Poster SET numberOfPages = numberOfPages + 1 WHERE PosterName = '"+userName+"'");
+        assert succ == 0;
+    }
 
 	/*
 	 * Create a thread
@@ -524,7 +536,7 @@ public class JDBCConnection {
 		ArrayList<Poster> users = new ArrayList<Poster>();
 		Statement stmnt = this.connection.createStatement();
 		ResultSet rs = stmnt
-				.executeQuery("SELECT * FROM Poster " + "WHERE " + op + " >= " + Integer.toString(arg) + "");
+				.executeQuery("SELECT * FROM Poster " + "WHERE " + op + " >= " + Integer.toString(arg) + " AND AdminID NOT NULL");
 		while (rs.next()) {
             String curName = rs.getString("PosterName");
             int rep = rs.getInt(2);
@@ -608,8 +620,8 @@ public class JDBCConnection {
 		Statement stmnt = this.connection.createStatement();
         ResultSet rs;
         if(idAndTitle.equals("true")) {
-            // TODO: Join threadID with its title (so it will be SELECT threadID, title FROM...
-            rs = null;
+            rs = stmnt.executeQuery("SELECT z.threadID, t2.title, z.voteNum FROM (SELECT c.threadID, " + op
+                                    + "(c.voteNum) as voteNum FROM UserComment c, Thread t GROUP BY c.threadID HAVING c.threadID = t.threadID) z, Thread t2 where t2.threadID = z.threadID");
         } else {
             rs = stmnt.executeQuery("SELECT c.threadid, " + op
 				+ "(c.voteNum) FROM UserComment c, Thread t GROUP BY c.threadID HAVING c.threadID = t.threadID");

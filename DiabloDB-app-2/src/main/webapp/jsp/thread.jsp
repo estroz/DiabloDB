@@ -114,7 +114,16 @@
                           </td>
                           <td>${comment.voteNum}</td>
                           <td>${comment.text}</td>
-                          <td>${comment.poster}</td>
+                          <td>
+                            <c:choose>
+                              <c:when test="${comment.poster != null}">
+                                ${comment.poster}
+                              </c:when>    
+                              <c:otherwise>
+                                [deleted]
+                              </c:otherwise>
+                            </c:choose>
+                          </td>
                       </tr>
                   </c:forEach>
                 </table>

@@ -70,10 +70,10 @@
                   </fieldset>
                   <fieldset>                                   
                     <div class="radio">
-                      <label><input type="radio" name="adminOnly" value="true">for all users</label>
+                      <label><input type="radio" name="adminOnly" value="false">for all users</label>
                     </div>
                     <div class="radio">
-                      <label><input type="radio" name="adminOnly" value ="false">for admins</label>
+                      <label><input type="radio" name="adminOnly" value ="true">for admins</label>
                     </div> 
                   </fieldset>
                     <br></br>

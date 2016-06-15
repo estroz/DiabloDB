@@ -76,7 +76,16 @@
                           <td>                          
                             <a href="/poster?action=getPageThreads&topicName=${page.topicName}">${page.topicName}</a>
                           </td>
-                          <td>${page.posterName}</td>
+                          <td>
+                            <c:choose>
+                              <c:when test="${page.posterName != null}">
+                                ${page.posterName}
+                              </c:when>    
+                              <c:otherwise>
+                                [deleted]
+                              </c:otherwise>
+                            </c:choose>
+                          </td>
                       </tr>
                   </c:forEach>
                 </table>

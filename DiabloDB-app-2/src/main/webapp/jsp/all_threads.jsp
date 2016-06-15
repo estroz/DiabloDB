@@ -96,7 +96,7 @@
                       <label><input type="radio" name="idAndTitle" value="false">thread IDs</label>
                     </div>
                     <div class="radio">
-                      <label><input type="radio" name="idAndTitle" value ="true">thread IDS & titles</label>
+                      <label><input type="radio" name="idAndTitle" value ="true">thread IDs & titles</label>
                     </div> 
                   </fieldset>
                   <h4>and</h4>                                   
@@ -180,6 +180,7 @@
                               <th>Title</th>
                               <th>Description</th>
                               <th>Votes</th>
+                              <th>Created at</th>
                               <th>Page</th>
                               <th>Created by</th>
                               <th></th>
@@ -191,6 +192,7 @@
                               <td>${thread.title}</td>
                               <td>${thread.text}</td>
                               <td>${thread.voteNum}</td>
+                              <td>${thread.time}</td>>
                               <td>${thread.topicName}</td>
                               <td>${thread.posterName}</td>
                               <td>

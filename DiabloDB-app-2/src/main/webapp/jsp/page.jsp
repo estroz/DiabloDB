@@ -116,7 +116,16 @@
                           <td>
                             <a href="/poster?action=getThreadComments&threadID=${thread.threadID}&title=${thread.title}">${thread.title}</a>
                           </td>
-                          <td>${thread.posterName}</td>
+                          <td>
+                            <c:choose>
+                              <c:when test="${thread.posterName != null}">
+                                ${thread.posterName}
+                              </c:when>    
+                              <c:otherwise>
+                                [deleted]
+                              </c:otherwise>
+                            </c:choose>
+                          </td>
                       </tr>
                   </c:forEach>
                 </table>
