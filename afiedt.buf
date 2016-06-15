@@ -1,0 +1,2 @@
+update poster set reputation = reputation + 1 where postername = (select postername from thread where threadid = 14)
+/

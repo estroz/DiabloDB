@@ -26,7 +26,7 @@ CREATE TABLE Poster (
 
 CREATE TABLE Page (
 	TopicName VARCHAR2(100),
-	PosterName VARCHAR2(50) NOT NULL,
+	PosterName VARCHAR2(50),
 	PRIMARY KEY (TopicName),
 	FOREIGN KEY (PosterName) REFERENCES Poster
 	ON DELETE SET NULL);
@@ -39,7 +39,7 @@ CREATE TABLE Thread (
 	voteNum INTEGER,
 	isLockedFlag INTEGER,
 	TopicName VARCHAR2(100) NOT NULL,
-	PosterName VARCHAR2(50) NOT NULL,
+	PosterName VARCHAR2(50),
 	PRIMARY KEY (ThreadID),
 	FOREIGN KEY (TopicName) REFERENCES Page
 	ON DELETE CASCADE,
@@ -61,7 +61,7 @@ CREATE TABLE UserComment (
 	Text VARCHAR2(4000),
 	voteNum INTEGER,
 	Time TIMESTAMP,
-	PosterName VARCHAR2(50) NOT NULL,
+	PosterName VARCHAR2(50),
 	ThreadID INTEGER NOT NULL,
 	PRIMARY KEY (CommID),
 	FOREIGN KEY (PosterName) REFERENCES Poster
@@ -82,7 +82,7 @@ CREATE TABLE CommentVote (
 CREATE TABLE Suggestion (
 	SugID INTEGER,
 	Text VARCHAR2(4000),
-	PosterName VARCHAR2(50) NOT NULL,
+	PosterName VARCHAR2(50),
 	TopicName VARCHAR2(100),
 	PRIMARY KEY (SugID),
 	FOREIGN KEY (PosterName) REFERENCES Poster 
@@ -119,6 +119,13 @@ insert into UserComment values (id_seq.nextval, 'CommentText2', 0, '2016-06-01',
 insert into UserComment values (id_seq.nextval, 'CommentText3', 0, '2016-06-01', 'Brett', 12);
 insert into UserComment values (id_seq.nextval, 'CommentText4', 0, '2016-06-01', 'Josh', 13);
 insert into UserComment values (id_seq.nextval, 'CommentText5', 0, '2016-06-01', 'Diablo', 14);
+
+-- make sam participate in every thread
+insert into UserComment values (id_seq.nextval, 'samrox', 0, '2016-06-01', 'Sam', 10); 
+insert into UserComment values (id_seq.nextval, 'samrox', 0, '2016-06-01', 'Sam', 11);
+insert into UserComment values (id_seq.nextval, 'samrox', 0, '2016-06-01', 'Sam', 12);
+insert into UserComment values (id_seq.nextval, 'samrox', 0, '2016-06-01', 'Sam', 13);
+insert into UserComment values (id_seq.nextval, 'samrox', 0, '2016-06-01', 'Sam', 14);
 
 insert into CommentVote values ('Eric', 1, 16);
 insert into CommentVote values ('Sam', 1, 17);
