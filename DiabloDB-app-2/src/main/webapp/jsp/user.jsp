@@ -34,6 +34,7 @@
           <ul class="nav navbar-nav">
             <li><a href="/poster?action=getUsers">All users</a></li>
             <li><a href="/poster?action=getThreads">All threads</a></li>
+            <li><a href="/poster?action=getComments">All comments</a></li>
           </ul>           
         </div><!--/.nav-collapse -->
       </div>
@@ -96,7 +97,10 @@
         <div class="col-md-12">
           
           <!-- ADDED FOR JSP STUFF -->
-          <form action="/poster" method="get" id="pageForm" role="form" >              
+          <form action="/poster" method="get" id="pageForm" role="form" > 
+            <c:if test="${not empty message}">
+                <div class="alert alert-info"> ${message} </div>
+            </c:if>               
             <c:choose>
               <c:when test="${not empty users}">
                 <table  class="table table-striped">
@@ -118,7 +122,39 @@
                                 <td>Yes</td>
                             </c:when>    
                             <c:otherwise>
-                                <td>No</td>
+                                <td><span class = "newMargin">No</span>     
+                                <!-- DELETE OPTION -->
+                                <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#deleteUser${poster.userName}">Delete</button>
+                                  <!-- Modal -->
+                                  <div class="modal fade" id="deleteUser${poster.userName}" role="dialog">
+                                    <div class="modal-dialog">
+                                    
+                                      <!-- Modal content-->
+                                      <div class="modal-content">
+                                        <div class="modal-header">
+                                          <h4 class="modal-title">Delete user</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                          <!-- JSP -->
+                                          <form action="/poster" method="post"  role="form" data-toggle="validator" >
+                                            <input type="hidden" id="action" name="action" value="deletePoster">
+                                            <input type="hidden" id="posterName" name="posterName" value="${poster.userName}">
+                                            <fieldset class="form-group">
+                                              <label class="control-label col-xs-4">Admin password:</label>
+                                              <input type="password" name="adminPass" id="adminPass" class="form-control" value="${adminPass}" required="true"/>
+                                            </fieldset>
+                                              <br></br>
+                                              <button type="submit" class="btn btn-primary  btn-md">Delete</button> 
+                                          </form>
+                                        </div>
+                                      </div>
+                                      
+                                    </div>
+                                  </div>
+                                  <!-- /Modal -->
+
+
+                                </td>
                             </c:otherwise>
                           </c:choose>
                       </tr>

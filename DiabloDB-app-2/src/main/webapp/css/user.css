@@ -3,6 +3,10 @@ body {
   padding-bottom: 30px;
 }
 
+.newMargin {
+    margin: 20px;
+}
+
 .sidebar {
   padding: 20px;
 }

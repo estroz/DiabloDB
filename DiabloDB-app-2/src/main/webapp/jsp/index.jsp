@@ -34,6 +34,7 @@
           <ul class="nav navbar-nav">
             <li><a href="/poster?action=getUsers">All users</a></li>
             <li><a href="/poster?action=getThreads">All threads</a></li>
+            <li><a href="/poster?action=getComments">All comments</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -55,7 +56,10 @@
         <div class="col-md-12">
 
           <!-- ADDED FOR JSP STUFF -->
-          <form action="/poster" method="get" id="pageForm" role="form" >              
+          <form action="/poster" method="get" id="pageForm" role="form" >
+            <c:if test="${not empty message}">
+                <div class="alert alert-info"> ${message} </div>
+            </c:if>               
             <c:choose>
               <c:when test="${not empty pages}">
                 <table  class="table table-striped">

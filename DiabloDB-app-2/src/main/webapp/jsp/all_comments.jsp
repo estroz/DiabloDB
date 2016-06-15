@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html lang="en">
   <head>
@@ -11,7 +12,7 @@
     <title>DiabloDB: the forum for something</title>
 
     <!-- Custom styles for this template -->
-    <link href="../css/page.css" rel="stylesheet">
+    <link href="../css/user.css" rel="stylesheet">
 
   </head>
 
@@ -34,89 +35,73 @@
             <li><a href="/poster?action=getUsers">All users</a></li>
             <li><a href="/poster?action=getThreads">All threads</a></li>
             <li><a href="/poster?action=getComments">All comments</a></li>
-          </ul>
+          </ul>           
         </div><!--/.nav-collapse -->
       </div>
     </nav>
 
     <div class="container theme-showcase" role="main">
-
       <div class="page-header">
-        <h3>Page: ${topicName}<h3>
-      </div>
-
-      <div class="sidebar">
-        <a href="jsp/create_thread.jsp?topicName=${topicName}"><button class="btn btn-primary">Create Thread</button></a>
+        <h2>Comments</h2>
       </div>
 
       <div class="row">
         <div class="col-md-12">
-
-          <!-- ADDED FOR JSP -->
-          <!-- List of pages -->
-          <form action="/poster" method="get" id="threadForm" role="form" > 
+          <!-- ADDED FOR JSP STUFF -->
+          <form action="/poster" method="get" id="pageForm" role="form" > 
             <c:if test="${not empty message}">
                 <div class="alert alert-info"> ${message} </div>
-            </c:if>                
+            </c:if>               
             <c:choose>
-              <c:when test="${not empty threads}">
-                <h2>${topic}</h2>
+              <c:when test="${not empty comments}">
                 <table  class="table table-striped">
                   <thead>
                       <tr>
-                          <td></td>
-                          <td>Votes</td>
-                          <td>Thread</td>
-                          <td>Poster</td>
+                          <th>ID</th>
+                          <th>Comment</th>
+                          <th>Votes</th>
+                          <th>Time</th>
+                          <th>Poster</th>
                       </tr>
                   </thead>
-                  <c:forEach var="thread" items="${threads}">
+                  <c:forEach var="comment" items="${comments}">
                       <tr>
+                          <td>${comment.commID}</td>
+                          <td>${comment.text}</td>
+                          <td>${comment.voteNum}</td>
+                          <td>${comment.time}</td>
+                          <td>${comment.poster}</td>
                           <td>
-                            <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal${thread.threadID}">Vote</button>
-                            <!-- Modal -->
-                            <div class="modal fade" id="myModal${thread.threadID}" role="dialog">
-                              <div class="modal-dialog">
-                              
-                                <!-- Modal content-->
-                                <div class="modal-content">
-                                  <div class="modal-header">
-                                    <h4 class="modal-title">Vote</h4>
-                                  </div>
-                                  <div class="modal-body">
-                                    <!-- JSP -->
-                                    <form action="/poster" method="post"  role="form" data-toggle="validator" >
-                                      <input type="hidden" id="action" name="action" value="createVote">
-                                      <input type="hidden" id="isComment" name="isComment" value="false">
-                                      <input type="hidden" id="id" name="id" value="${thread.threadID}">
-                                      <input type="hidden" id="topicName" name="topicName" value="${thread.topicName}">
-                                      <fieldset class="form-group">
-                                        <label class="control-label col-xs-4">Poster name:</label>
-                                        <input type="text" name="posterName" id="posterName" class="form-control" required="true"/>
-                                      </fieldset>
-                                      <fieldset>                                   
-                                        <div class="radio">
-                                          <label><input type="radio" name="voteType" value="true">Upvote</label>
-                                        </div>
-                                        <div class="radio">
-                                          <label><input type="radio" name="voteType" value ="false">Downvote</label>
-                                        </div> 
-                                      </fieldset>
-                                        <br></br>
-                                        <button type="submit" class="btn btn-primary  btn-md">Vote</button> 
-                                    </form>
-                                  </div>
-                                </div>
+                            <!-- DELETE OPTION -->
+                            <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#deleteComment${comment.commID}">Delete</button>
+                              <!-- Modal -->
+                              <div class="modal fade" id="deleteComment${comment.commID}" role="dialog">
+                                <div class="modal-dialog">
                                 
+                                  <!-- Modal content-->
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h4 class="modal-title">Delete comment</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                      <!-- JSP -->
+                                      <form action="/poster" method="post"  role="form" data-toggle="validator" >
+                                        <input type="hidden" id="action" name="action" value="deleteComment">
+                                        <input type="hidden" id="commID" name="commID" value="${comment.commID}">
+                                        <fieldset class="form-group">
+                                          <label class="control-label col-xs-4">Admin password:</label>
+                                          <input type="password" name="adminPass" id="adminPass" class="form-control" value="${adminPass}" required="true"/>
+                                        </fieldset>
+                                          <br></br>
+                                          <button type="submit" class="btn btn-primary  btn-md">Delete</button> 
+                                      </form>
+                                    </div>
+                                  </div>
+                                  
+                                </div>
                               </div>
-                            </div>
-                            <!-- /Modal -->
+                              <!-- /Modal -->
                           </td>
-                          <td>${thread.voteNum}</td>
-                          <td>
-                            <a href="/poster?action=getThreadComments&threadID=${thread.threadID}&title=${thread.title}">${thread.title}</a>
-                          </td>
-                          <td>${thread.posterName}</td>
                       </tr>
                   </c:forEach>
                 </table>
@@ -124,15 +109,17 @@
                   <c:otherwise>
                       <br>           
                       <div class="alert alert-info">
-                          No threads.
+                          No comments.
                       </div>
                   </c:otherwise>
             </c:choose>
           </form>
           <!-- ADDED FOR JSP STUFF -->
-
         </div>
       </div>
+
+
+    </div> <!-- /container -->
 
     <!-- Bootstrap core JavaScript
     ================================================== -->

@@ -178,6 +178,29 @@ public class JDBCConnection {
         }
         return arr;
     }
+    
+    /*
+     * Returns an array of all Comments
+     */
+    public ArrayList<Comment> getAllComments() throws SQLException {
+        ArrayList<Comment> arr = new ArrayList<Comment>();
+        
+        Statement stmnt = this.connection.createStatement();
+        ResultSet rs = stmnt.executeQuery("SELECT * FROM UserComment");
+        while (rs.next()) {
+            int id = rs.getInt(1);
+            String text = rs.getString(2);
+            int voteNum = rs.getInt(3);
+            Time time = rs.getTime(4);
+            String poster = rs.getString(5);
+            String threadID = rs.getString(6);
+            Comment c = new Comment(id, text, voteNum, time, poster, threadID);
+            arr.add(c);
+            
+        }
+        return arr;
+    }
+
 
 	/*
 	 * Returns a list of all pages
@@ -580,19 +603,52 @@ public class JDBCConnection {
 	// the avg comment score op="avg"
 	// the count of comments op ="count"
 
-	public HashMap<String, Integer> CommentInfo(String op) throws SQLException {
-		HashMap<String, Integer> threadVoteMap = new HashMap<String, Integer>();
+	public ArrayList<Thread> CommentInfo(String idAndTitle, String op) throws SQLException {
+        ArrayList<Thread> threads = new ArrayList<Thread>();
 		Statement stmnt = this.connection.createStatement();
-		ResultSet rs = stmnt.executeQuery("SELECT + c.threadid, " + op
+        ResultSet rs;
+        if(idAndTitle.equals("true")) {
+            // TODO: Join threadID with its title (so it will be SELECT threadID, title FROM...
+            rs = null;
+        } else {
+            rs = stmnt.executeQuery("SELECT c.threadid, " + op
 				+ "(c.voteNum) FROM UserComment c, Thread t GROUP BY c.threadID HAVING c.threadID = t.threadID");
+        }
 
 		while (rs.next()) {
-			String threadid = rs.getString(1);
-			Integer votenum = rs.getInt(2);
-			threadVoteMap.put(threadid, votenum);
+			int threadID = rs.getInt(1);
+            if(idAndTitle.equals("true")) {
+                String title = rs.getString(2);
+                Integer votenum = rs.getInt(3);
+                threads.add(new Thread(threadID, title, null, null, votenum, false, null, null));
+            } else{
+                Integer votenum = rs.getInt(2);
+                threads.add(new Thread(threadID, null, null, null, votenum, false, null, null));
+            }
 		}
-
-		return threadVoteMap;
+		return threads;
 	}
+    
+    /*
+     *  ---------------- DELETES ----------------
+     *
+     */
+    
+    public void deleteComment(String commID) throws SQLException {
+        Statement stmnt = this.connection.createStatement();
+        int succ = stmnt.executeUpdate("DELETE FROM UserComment WHERE commID = " + commID);
+    }
+    
+    public void deleteThread(String threadID) throws SQLException {
+        Statement stmnt = this.connection.createStatement();
+        int succ = stmnt.executeUpdate("DELETE FROM Thread WHERE threadid = " + threadID);
+        
+    }
+    
+    public void deleteUser(String userName) throws SQLException {
+        Statement stmnt = this.connection.createStatement();
+        int succ = stmnt.executeUpdate("DELETE FROM Poster WHERE Postername = '" + userName+ "'");
+        
+    }
 
 }

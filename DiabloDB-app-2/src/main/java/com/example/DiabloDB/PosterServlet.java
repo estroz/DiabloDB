@@ -27,7 +27,13 @@ public class PosterServlet extends HttpServlet {
 			switch (action) {
 			// Gets
 			
-			// The getQueriedPosters and createVote do not want to go to POST so added to GET
+			// The getQueriedPosters, deleteComment & createVote do not want to go to POST so added to GET
+            case "deleteComment":
+                deleteComment(req, res);
+                break;
+            case "getQueriedThreadsBasedOnComments":
+                getQueriedThreadsBasedOnComments(req, res);
+                break;
             case "getPostersInAllThreads":
                 getPostersInAllThreads(req, res);
                 break;
@@ -48,6 +54,9 @@ public class PosterServlet extends HttpServlet {
 				break;
             case "getThreads":
                 getThreads(req, res);
+                break;
+            case "getComments":
+                getComments(req, res);
                 break;
 			case "getSpecifiedUser":
 				getSpecifiedUser(req, res);
@@ -156,6 +165,24 @@ public class PosterServlet extends HttpServlet {
         d.forward(req, res);
     }
     
+    private void getQueriedThreadsBasedOnComments(HttpServletRequest req, HttpServletResponse res)
+    throws ServletException, IOException {
+        ArrayList<Thread> threads = null;
+        String op = req.getParameter("op");
+        String idAndTitle = req.getParameter("idAndTitle");
+        try{
+            threads = jdbcc.CommentInfo(idAndTitle, op);
+        } catch (SQLException e) {
+            Logger.getLogger(PosterServlet.class.getName()).log(Level.SEVERE, null, e);
+        }
+        String message = "Query comments of threads";
+        req.setAttribute("threads", threads);
+        req.setAttribute("message", message);
+        String nextJsp = "/jsp/all_threads.jsp";
+        RequestDispatcher d = getServletContext().getRequestDispatcher(nextJsp);
+        d.forward(req, res);
+    }
+    
     private void getQueriedPosters(HttpServletRequest req, HttpServletResponse res)
     throws ServletException, IOException {
         ArrayList<Poster> users = null;
@@ -252,11 +279,18 @@ public class PosterServlet extends HttpServlet {
 
 	private void getUsers(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		ArrayList<Poster> users = null;
+        
+        //Added for errors when deleting user
+        String message = null;
+        if (req.getAttribute("message") != null) message = req.getAttribute("message").toString();
+        
 		try {
 			users = jdbcc.getUsers();
 		} catch (SQLException e) {
 			Logger.getLogger(PosterServlet.class.getName()).log(Level.SEVERE, null, e);
 		}
+        
+        req.setAttribute("message", message);
 		req.setAttribute("users", users);
 		String nextJsp = "/jsp/user.jsp";
 		RequestDispatcher d = getServletContext().getRequestDispatcher(nextJsp);
@@ -265,13 +299,40 @@ public class PosterServlet extends HttpServlet {
     
     private void getThreads(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         ArrayList<Thread> threads = null;
+        
+        //Added for errors when deleting user
+        String errorMessage = null;
+        if (req.getAttribute("errorMessage") != null) errorMessage = req.getAttribute("errorMessage").toString();
+        
         try {
             threads = jdbcc.getAllThreads();
         } catch (SQLException e) {
             Logger.getLogger(PosterServlet.class.getName()).log(Level.SEVERE, null, e);
         }
+        
+        req.setAttribute("errorMessage", errorMessage);
         req.setAttribute("threads", threads);
         String nextJsp = "/jsp/all_threads.jsp";
+        RequestDispatcher d = getServletContext().getRequestDispatcher(nextJsp);
+        d.forward(req, res);
+    }
+    
+    private void getComments(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        ArrayList<Comment> comments = null;
+        
+        //Added for errors when deleting user
+        String message = null;
+        if (req.getAttribute("message") != null) message = req.getAttribute("message").toString();
+
+        try {
+            comments = jdbcc.getAllComments();
+        } catch (SQLException e) {
+            Logger.getLogger(PosterServlet.class.getName()).log(Level.SEVERE, null, e);
+        }
+        
+        req.setAttribute("message", message);
+        req.setAttribute("comments", comments);
+        String nextJsp = "/jsp/all_comments.jsp";
         RequestDispatcher d = getServletContext().getRequestDispatcher(nextJsp);
         d.forward(req, res);
     }
@@ -318,6 +379,15 @@ public class PosterServlet extends HttpServlet {
 			case "createSuggestion":
 				createSuggestion(req, res);
 				break;
+            case "deleteComment":
+                deleteComment(req, res);
+                break;
+            case "deleteThread":
+                deleteThread(req, res);
+                break;
+            case "deletePoster":
+                deletePoster(req, res);
+                break;
 			}
 		}
 	}
@@ -341,6 +411,60 @@ public class PosterServlet extends HttpServlet {
 		// getServletContext().getRequestDispatcher(nextJsp);
 		// d.forward(req, res);
 	}
+    
+    private void deleteComment(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        String adminPass = req.getParameter("adminPass");
+        String commID = req.getParameter("commID");
+        String message = null;
+        if(adminPass.equals("admin")) {
+            try{
+                jdbcc.deleteComment(commID);
+            } catch(SQLException e) {
+                Logger.getLogger(PosterServlet.class.getName()).log(Level.SEVERE, null, e);
+                message = "SQL error";
+            }
+        } else {
+            message = "Admin password incorrect. Comment not deleted";
+        }
+        req.setAttribute("message", message);
+        getComments(req, res);
+    }
+    
+    private void deleteThread(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        String adminPass = req.getParameter("adminPass");
+        String threadID = req.getParameter("threadID");
+        String errorMessage = null;
+        if(adminPass.equals("admin")) {
+            try{
+                jdbcc.deleteThread(threadID);
+            } catch(SQLException e) {
+                Logger.getLogger(PosterServlet.class.getName()).log(Level.SEVERE, null, e);
+                errorMessage = "SQL error";
+            }
+        } else {
+            errorMessage = "Admin password incorrect. Thread not deleted";
+        }
+        req.setAttribute("errorMessage", errorMessage);
+        getThreads(req, res);
+    }
+    
+    private void deletePoster(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        String adminPass = req.getParameter("adminPass");
+        String posterName = req.getParameter("posterName");
+        String message = null;
+        if(adminPass.equals("admin")) {
+            try{
+                jdbcc.deleteUser(posterName);
+            } catch(SQLException e) {
+                Logger.getLogger(PosterServlet.class.getName()).log(Level.SEVERE, null, e);
+                message = "SQL error";
+            }
+        } else {
+            message = "Admin password incorrect. User not deleted";
+        }
+        req.setAttribute("message", message);
+        getUsers(req, res);
+    }
 
 	private void createVote(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		String posterName = req.getParameter("posterName");
@@ -384,12 +508,14 @@ public class PosterServlet extends HttpServlet {
 		String threadID = req.getParameter("threadID");
 		String posterName = req.getParameter("posterName");
 		String title = req.getParameter("title");
+        String message = null;
 		try {
 			jdbcc.createComment(text, posterName, threadID);
+            message = "Your comment has been successfully posted!";
 		} catch (SQLException e) {
 			Logger.getLogger(PosterServlet.class.getName()).log(Level.SEVERE, null, e);
+            message = "Comment not posted";
 		}
-		String message = "Your comment has been successfully posted!";
 		req.setAttribute("message", message);
 		req.setAttribute("title", title);
 		req.setAttribute("threadID", threadID);
@@ -402,12 +528,14 @@ public class PosterServlet extends HttpServlet {
 		String text = req.getParameter("text");
 		String topicName = req.getParameter("topicName");
 		String posterName = req.getParameter("posterName");
+        String message = null;
 		try {
 			jdbcc.createThread(threadTitle, text, topicName, posterName);
+            message = threadTitle + " has been created in " + topicName + ".";
 		} catch (SQLException e) {
 			Logger.getLogger(PosterServlet.class.getName()).log(Level.SEVERE, null, e);
+            message = "Thread not created";
 		}
-		String message = threadTitle + " has been created in " + topicName + ".";
 		req.setAttribute("message", message);
 		req.setAttribute("topicName", topicName);
 		getPageThreads(req, res);
@@ -416,12 +544,14 @@ public class PosterServlet extends HttpServlet {
 	private void createPage(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		String topicName = req.getParameter("topicName");
 		String posterName = req.getParameter("posterName");
+        String message = null;
 		try {
 			jdbcc.createPage(topicName, posterName);
+            message = topicName + " has been created.";
 		} catch (SQLException e) {
 			Logger.getLogger(PosterServlet.class.getName()).log(Level.SEVERE, null, e);
+            message = "Page not created";
 		}
-		String message = topicName + " has been created.";
 		req.setAttribute("message", message);
 		getAllPages(req, res);
 	}

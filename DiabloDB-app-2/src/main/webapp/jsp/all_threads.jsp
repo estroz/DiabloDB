@@ -34,6 +34,7 @@
           <ul class="nav navbar-nav">
             <li><a href="/poster?action=getUsers">All users</a></li>
             <li><a href="/poster?action=getThreads">All threads</a></li>
+            <li><a href="/poster?action=getComments">All comments</a></li>
           </ul>           
         </div><!--/.nav-collapse -->
       </div>
@@ -42,7 +43,7 @@
     <div class="container theme-showcase" role="main">
 
       <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal">Query Theads</button>
-        <!-- Modal -->
+        <!-- Modal NUMBER ONE-->
         <div class="modal fade" id="myModal" role="dialog">
           <div class="modal-dialog">
           
@@ -74,49 +75,170 @@
         </div>
         <!-- /Modal -->
 
+
+
+        <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModalQueryComments">Query Comments of Threads</button>
+        <!-- Modal NUMBER TWO-->
+        <div class="modal fade" id="myModalQueryComments" role="dialog">
+          <div class="modal-dialog">
+          
+            <!-- Modal content-->
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title">Get</h4>
+              </div>
+              <div class="modal-body">
+                <!-- JSP -->
+                <form action="/poster" method="get"  role="form" data-toggle="validator" >
+                  <input type="hidden" id="action" name="action" value="getQueriedThreadsBasedOnComments">
+                  <fieldset>                                   
+                    <div class="radio">
+                      <label><input type="radio" name="idAndTitle" value="false">thread IDs</label>
+                    </div>
+                    <div class="radio">
+                      <label><input type="radio" name="idAndTitle" value ="true">thread IDS & titles</label>
+                    </div> 
+                  </fieldset>
+                  <h4>and</h4>                                   
+                  <fieldset>                                   
+                    <div class="radio">
+                      <label><input type="radio" name="op" value="max">max votes</label>
+                    </div>
+                    <div class="radio">
+                      <label><input type="radio" name="op" value ="min">min votes</label>
+                    </div> 
+                    <div class="radio">
+                      <label><input type="radio" name="op" value ="avg">avg votes</label>
+                    </div> 
+                    <div class="radio">
+                      <label><input type="radio" name="op" value ="count">number of votes</label>
+                    </div> 
+                  </fieldset>
+                  <h4>from comments.</h4>
+    
+                  <br></br>
+                  <button type="submit" class="btn btn-primary  btn-md">Submit</button> 
+                </form>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        <!-- /Modal -->
+
       <div class="page-header">
         <h2>Threads</h2>
       </div>
 
       <div class="row">
         <div class="col-md-12">
-          
           <!-- ADDED FOR JSP STUFF -->
-          <form action="/poster" method="get" id="pageForm" role="form" >              
-            <c:choose>
-              <c:when test="${not empty threads}">
-                <table  class="table table-striped">
-                  <thead>
-                      <tr>
-                          <th>Thread ID</th>
-                          <th>Title</th>
-                          <th>Description</th>
-                          <th>Votes</th>
-                          <th>Page</th>
-                          <th>Created by</th>
-                      </tr>
-                  </thead>
-                  <c:forEach var="thread" items="${threads}">
-                      <tr>
-                          <td>${thread.threadID}</td>
-                          <td>${thread.title}</td>
-                          <td>${thread.text}</td>
-                          <td>${thread.voteNum}</td>
-                          <td>${thread.topicName}</td>
-                          <td>${thread.posterName}</td>
-                      </tr>
-                  </c:forEach>
-                </table>
-               </c:when>                    
-                  <c:otherwise>
-                      <br>           
-                      <div class="alert alert-info">
-                          No threads.
-                      </div>
-                  </c:otherwise>
-            </c:choose>
-          </form>
-          <!-- ADDED FOR JSP STUFF -->
+          <c:if test="${not empty errorMessage}">
+            <div class="alert alert-info"> ${errorMessage} </div>
+          </c:if> 
+          <!-- different output depending on if user doing query -->
+          <c:choose>
+            <c:when test="${not empty message}">
+              <form action="/poster" method="get" id="pageForm" role="form" >              
+                <c:choose>
+                  <c:when test="${not empty threads}">
+                    <table  class="table table-striped">
+                      <thead>
+                          <tr>
+                              <th>Thread ID</th>
+                              <th>Title</th>
+                              <th>Votes</th>
+                          </tr>
+                      </thead>
+                      <c:forEach var="thread" items="${threads}">
+                          <tr>
+                              <td>${thread.threadID}</td>
+                              <td>${thread.title}</td>
+                              <td>${thread.voteNum}</td>
+                          </tr>
+                      </c:forEach>
+                    </table>
+                   </c:when>                    
+                      <c:otherwise>
+                          <br>           
+                          <div class="alert alert-info">
+                              No threads.
+                          </div>
+                      </c:otherwise>
+                </c:choose>
+              </form>        
+            </c:when>
+
+            <c:otherwise>
+              <form action="/poster" method="get" id="pageForm" role="form" >              
+                <c:choose>
+                  <c:when test="${not empty threads}">
+                    <table  class="table table-striped">
+                      <thead>
+                          <tr>
+                              <th>Thread ID</th>
+                              <th>Title</th>
+                              <th>Description</th>
+                              <th>Votes</th>
+                              <th>Page</th>
+                              <th>Created by</th>
+                              <th></th>
+                          </tr>
+                      </thead>
+                      <c:forEach var="thread" items="${threads}">
+                          <tr>
+                              <td>${thread.threadID}</td>
+                              <td>${thread.title}</td>
+                              <td>${thread.text}</td>
+                              <td>${thread.voteNum}</td>
+                              <td>${thread.topicName}</td>
+                              <td>${thread.posterName}</td>
+                              <td>
+                                <!-- DELETE OPTION -->
+                                <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#deleteThread${thread.threadID}">Delete</button>
+                                  <!-- Modal -->
+                                  <div class="modal fade" id="deleteThread${thread.threadID}" role="dialog">
+                                    <div class="modal-dialog">
+                                    
+                                      <!-- Modal content-->
+                                      <div class="modal-content">
+                                        <div class="modal-header">
+                                          <h4 class="modal-title">Delete thread</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                          <!-- JSP -->
+                                          <form action="/poster" method="post"  role="form" data-toggle="validator" >
+                                            <input type="hidden" id="action" name="action" value="deleteThread">
+                                            <input type="hidden" id="threadID" name="threadID" value="${thread.threadID}">
+                                            <fieldset class="form-group">
+                                              <label class="control-label col-xs-4">Admin password:</label>
+                                              <input type="password" name="adminPass" id="adminPass" class="form-control" value="${adminPass}" required="true"/>
+                                            </fieldset>
+                                              <br></br>
+                                              <button type="submit" class="btn btn-primary  btn-md">Delete</button> 
+                                          </form>
+                                        </div>
+                                      </div>
+                                      
+                                    </div>
+                                  </div>
+                                  <!-- /Modal -->
+                              </td>
+                          </tr>
+                      </c:forEach>
+                    </table>
+                   </c:when>                    
+                      <c:otherwise>
+                          <br>           
+                          <div class="alert alert-info">
+                              No threads.
+                          </div>
+                      </c:otherwise>
+                </c:choose>
+              </form>        
+            </c:otherwise>
+          </c:choose>
+        <!-- ADDED FOR JSP STUFF -->
 
         </div>
       </div>
