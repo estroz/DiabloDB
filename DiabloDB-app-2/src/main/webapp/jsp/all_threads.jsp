@@ -12,7 +12,7 @@
     <title>DiabloDB: the forum for something</title>
 
     <!-- Custom styles for this template -->
-    <link href="../css/index.css" rel="stylesheet">
+    <link href="../css/user.css" rel="stylesheet">
 
   </head>
 
@@ -28,51 +28,82 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/poster">DiabloDB <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></a>
+          <a class="navbar-brand" href="/poster">DiabloDB <span class="glyphicon glyphicon-fire" aria-hidden="true"></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li><a href="/poster?action=getUsers">All users</a></li>
             <li><a href="/poster?action=getThreads">All threads</a></li>
-          </ul>
+          </ul>           
         </div><!--/.nav-collapse -->
       </div>
     </nav>
 
     <div class="container theme-showcase" role="main">
 
-      <div class="jumbotron">
-        <h1>DiabloDB <span class="glyphicon glyphicon-fire" aria-hidden="true"></h1>
-        <p>Your cloud based solution for machine intelligence content and delivery network.</p>
-      </div>
+      <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal">Query Theads</button>
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" role="dialog">
+          <div class="modal-dialog">
+          
+            <!-- Modal content-->
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title">Query threads. Get...</h4>
+              </div>
+              <div class="modal-body">
+                <!-- JSP -->
+                <form action="/poster" method="get"  role="form" data-toggle="validator" >
+                  <input type="hidden" id="action" name="action" value="getQueriedThreads">
+                  <input type="hidden" id="select" name="select" value="*">
+                  <fieldset>                                   
+                    <div class="radio">
+                      <label><input type="radio" name="op" value=">">most popular threads.</label>
+                    </div>
+                    <div class="radio">
+                      <label><input type="radio" name="op" value ="<">least popular threads.</label>
+                    </div> 
+                  </fieldset>
+                    <br></br>
+                    <button type="submit" class="btn btn-primary  btn-md">Submit</button> 
+                </form>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        <!-- /Modal -->
 
-      <div class="sidebar">
-        <a href="jsp/create_page.jsp"><button class="btn btn-primary">Create Page</button></a>
-        <a href="jsp/create_user.jsp"><button class="btn btn-primary">Create User</button></a>
+      <div class="page-header">
+        <h2>Threads</h2>
       </div>
 
       <div class="row">
         <div class="col-md-12">
-
+          
           <!-- ADDED FOR JSP STUFF -->
           <form action="/poster" method="get" id="pageForm" role="form" >              
             <c:choose>
-              <c:when test="${not empty pages}">
+              <c:when test="${not empty threads}">
                 <table  class="table table-striped">
                   <thead>
                       <tr>
-                          <th>Status</th>
+                          <th>Thread ID</th>
+                          <th>Title</th>
+                          <th>Description</th>
+                          <th>Votes</th>
                           <th>Page</th>
                           <th>Created by</th>
                       </tr>
                   </thead>
-                  <c:forEach var="page" items="${pages}">
+                  <c:forEach var="thread" items="${threads}">
                       <tr>
-                          <td><span class="label label-default">Neutral</span></td>
-                          <td>                          
-                            <a href="/poster?action=getPageThreads&topicName=${page.topicName}">${page.topicName}</a>
-                          </td>
-                          <td>${page.posterName}</td>
+                          <td>${thread.threadID}</td>
+                          <td>${thread.title}</td>
+                          <td>${thread.text}</td>
+                          <td>${thread.voteNum}</td>
+                          <td>${thread.topicName}</td>
+                          <td>${thread.posterName}</td>
                       </tr>
                   </c:forEach>
                 </table>
@@ -80,7 +111,7 @@
                   <c:otherwise>
                       <br>           
                       <div class="alert alert-info">
-                          No pages.
+                          No threads.
                       </div>
                   </c:otherwise>
             </c:choose>
@@ -89,8 +120,9 @@
 
         </div>
       </div>
-    </div> <!-- /container -->
 
+
+    </div> <!-- /container -->
 
     <!-- Bootstrap core JavaScript
     ================================================== -->

@@ -25,8 +25,7 @@ public class JDBCConnection {
 		try {
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 			System.out.println("Driver registered");
-			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1522:ug", "user",
-					"pass");
+			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1522:ug", "user", "pass");
 			this.connection = con;
 		} catch (SQLException e) {
 			System.out.println("Couldn't conenct to the database, are you tunneled?");
@@ -147,10 +146,38 @@ public class JDBCConnection {
 			arr.add(t);
 
 		}
-
 		return arr;
-
 	}
+    
+    /*
+     * Returns an array of all Threads
+     */
+    public ArrayList<Thread> getAllThreads() throws SQLException {
+        ArrayList<Thread> arr = new ArrayList<Thread>();
+        
+        Statement stmnt = this.connection.createStatement();
+        ResultSet rs = stmnt.executeQuery("SELECT * FROM Thread");
+        while (rs.next()) {
+            int id = rs.getInt(1);
+            String title = rs.getString("Title");
+            String text = rs.getString(3);
+            Time time = rs.getTime(4);
+            int voteNum = rs.getInt(5);
+            int lockedNum = rs.getInt(6);
+            boolean isLocked;
+            if (lockedNum == 0) {
+                isLocked = false;
+            } else {
+                isLocked = true;
+            }
+            String topicName = rs.getString(7);
+            String posterName = rs.getString(8);
+            Thread t = new Thread(id, title, text, time, voteNum, isLocked, topicName, posterName);
+            arr.add(t);
+            
+        }
+        return arr;
+    }
 
 	/*
 	 * Returns a list of all pages
@@ -498,17 +525,19 @@ public class JDBCConnection {
 		return sugIDs;
 	}
 
-	public ArrayList<String> usersInAllThreads() throws SQLException {
-		ArrayList<String> posternames = new ArrayList<String>();
+	public ArrayList<Poster> usersInAllThreads() throws SQLException {
+		ArrayList<Poster> posternames = new ArrayList<Poster>();
 
 		Statement stmnt = this.connection.createStatement();
 		ResultSet rs = stmnt.executeQuery(
-				"SELECT postername FROM poster p WHERE NOT EXISTS ((SELECT t.threadID FROM thread t) MINUS "
+				"SELECT * FROM poster p WHERE NOT EXISTS ((SELECT t.threadID FROM thread t) MINUS "
 						+ "(SELECT c.threadid FROM usercomment c, thread t WHERE p.postername = c.postername AND "
 						+ "c.threadid = t.threadid) )");
 		while (rs.next()) {
-			String id = rs.getString(1);
-			posternames.add(id);
+            String curName = rs.getString("PosterName");
+            int rep = rs.getInt(2);
+            int numPages = rs.getInt(3);
+            posternames.add(new Poster(curName, rep, numPages, null));
 		}
 		return posternames;
 
@@ -517,10 +546,13 @@ public class JDBCConnection {
 	// Op is one of : {" < " or " > "}
 	// if <, gives the min
 	// if > gives the max
-	public Thread minOrMaxThread(String op) throws SQLException {
+	public ArrayList<Thread> minOrMaxThread(String selection, String op) throws SQLException {
+        ArrayList<Thread> threads = new ArrayList<Thread>();
 		Statement stmnt = this.connection.createStatement();
+        String maxOrMin = "max";
+        if(op.equals("<")) maxOrMin = "min";
 		ResultSet rs = stmnt.executeQuery(
-				"select * from thread t where t.votenum " + op + "= (select max(t1.votenum) from thread t1)");
+				"select * from thread t where t.votenum " + op + "= (select " + maxOrMin + "(t1.votenum) from thread t1)");
 
 		Thread t = null;
 		while (rs.next()) {
@@ -538,10 +570,9 @@ public class JDBCConnection {
 			}
 			String topicName = rs.getString(7);
 			String posterName = rs.getString(8);
-			t = new Thread(threadID, title, text, time, voteNum, isLocked, topicName, posterName);
+			threads.add(new Thread(threadID, title, text, time, voteNum, isLocked, topicName, posterName));
 		}
-		return t;
-
+		return threads;
 	}
 
 	// get the min comment score op="min"

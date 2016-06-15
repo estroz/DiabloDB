@@ -28,8 +28,14 @@ public class PosterServlet extends HttpServlet {
 			// Gets
 			
 			// The getQueriedPosters and createVote do not want to go to POST so added to GET
+            case "getPostersInAllThreads":
+                getPostersInAllThreads(req, res);
+                break;
             case "getQueriedPosters":
                 getQueriedPosters(req, res);
+                break;
+            case "getQueriedThreads":
+                getQueriedThreads(req, res);
                 break;
 			case "createVote":
 				createVote(req, res);
@@ -40,6 +46,9 @@ public class PosterServlet extends HttpServlet {
 			case "getUsers":
 				getUsers(req, res);
 				break;
+            case "getThreads":
+                getThreads(req, res);
+                break;
 			case "getSpecifiedUser":
 				getSpecifiedUser(req, res);
 				break;
@@ -115,6 +124,37 @@ public class PosterServlet extends HttpServlet {
 		// getServletContext().getRequestDispatcher(nextJsp);
 		// d.forward(req, res);
 	}
+    
+    private void getPostersInAllThreads(HttpServletRequest req, HttpServletResponse res)
+    throws ServletException, IOException {
+        ArrayList<Poster> users = null;
+        try {
+            users = jdbcc.usersInAllThreads();
+        } catch (SQLException e) {
+            Logger.getLogger(PosterServlet.class.getName()).log(Level.SEVERE, null, e);
+        }
+        req.setAttribute("users", users);
+        String nextJsp = "/jsp/user.jsp";
+        RequestDispatcher d = getServletContext().getRequestDispatcher(nextJsp);
+        d.forward(req, res);
+    }
+    
+    private void getQueriedThreads(HttpServletRequest req, HttpServletResponse res)
+    throws ServletException, IOException {
+        ArrayList<Thread> threads = null;
+        String select = req.getParameter("select");
+        String op = req.getParameter("op");
+        try{
+            threads = jdbcc.minOrMaxThread(select, op);
+        } catch (SQLException e) {
+            Logger.getLogger(PosterServlet.class.getName()).log(Level.SEVERE, null, e);
+        }
+
+        req.setAttribute("threads", threads);
+        String nextJsp = "/jsp/all_threads.jsp";
+        RequestDispatcher d = getServletContext().getRequestDispatcher(nextJsp);
+        d.forward(req, res);
+    }
     
     private void getQueriedPosters(HttpServletRequest req, HttpServletResponse res)
     throws ServletException, IOException {
@@ -222,6 +262,19 @@ public class PosterServlet extends HttpServlet {
 		RequestDispatcher d = getServletContext().getRequestDispatcher(nextJsp);
 		d.forward(req, res);
 	}
+    
+    private void getThreads(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        ArrayList<Thread> threads = null;
+        try {
+            threads = jdbcc.getAllThreads();
+        } catch (SQLException e) {
+            Logger.getLogger(PosterServlet.class.getName()).log(Level.SEVERE, null, e);
+        }
+        req.setAttribute("threads", threads);
+        String nextJsp = "/jsp/all_threads.jsp";
+        RequestDispatcher d = getServletContext().getRequestDispatcher(nextJsp);
+        d.forward(req, res);
+    }
 
 	private void getAllPages(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		ArrayList<Page> pages = null;

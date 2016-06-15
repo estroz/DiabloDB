@@ -32,6 +32,7 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li><a href="/poster?action=getUsers">All users</a></li>
+            <li><a href="/poster?action=getThreads">All threads</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -71,9 +72,9 @@
                   <c:forEach var="thread" items="${threads}">
                       <tr>
                           <td>
-                            <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal{thread.threadID}">Vote</button>
+                            <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal${thread.threadID}">Vote</button>
                             <!-- Modal -->
-                            <div class="modal fade" id="myModal{thread.threadID}" role="dialog">
+                            <div class="modal fade" id="myModal${thread.threadID}" role="dialog">
                               <div class="modal-dialog">
                               
                                 <!-- Modal content-->

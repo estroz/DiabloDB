@@ -33,6 +33,7 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li><a href="/poster?action=getUsers">All users</a></li>
+            <li><a href="/poster?action=getThreads">All threads</a></li>
           </ul>           
         </div><!--/.nav-collapse -->
       </div>
@@ -84,10 +85,8 @@
         </div>
         <!-- /Modal -->
 
-
-
-
-
+        <!-- DEMO QUERY -->
+        <a href="/poster?action=getPostersInAllThreads"><button class="btn btn-primary">Get posters in all threads</button></a>
 
       <div class="page-header">
         <h2>Users</h2>

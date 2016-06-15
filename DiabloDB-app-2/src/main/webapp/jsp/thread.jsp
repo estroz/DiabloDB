@@ -32,6 +32,7 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li><a href="/poster?action=getUsers">All users</a></li>
+            <li><a href="/poster?action=getThreads">All threads</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
